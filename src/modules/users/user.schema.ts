@@ -25,6 +25,9 @@ export class User {
 
   @Prop({ required: true })
   city: string;
+
+  @Prop({ required: true })
+  address: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { User } from './user.schema';
 import { UserService } from './user.service';
+import { HashMiddleware } from 'src/middlewares/hash.middleware';
 
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -31,3 +32,4 @@ export class UserController {
     return this.userService.delete(id);
   }
 }
+
