@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Get, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.schema';
 import { ApiResponse } from './../../core/api/api.interface';
+import { MongoError } from 'mongodb';
 
 @Controller('user')
 export class UserController {
@@ -17,6 +18,10 @@ export class UserController {
         message: 'User created successfully',
       };
     } catch (error) {
+      
+      if (error instanceof MongoError) {
+        throw new HttpException('MongoDB Error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
       return {
         status: 'error',
         data: null,
