@@ -7,8 +7,6 @@ export class AssignVerificationTokenPipe implements PipeTransform {
   transform(user: User): User {
     const updatedUser = { ...user };
     updatedUser.verificationToken = uuidv4();
-    console.log('AssignVerificationTokenPipe', updatedUser);
-    
     return updatedUser;
   }
 }

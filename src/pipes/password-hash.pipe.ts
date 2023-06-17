@@ -13,7 +13,6 @@ export class PasswrodHashPipe implements PipeTransform<any> {
 
       // Replace the plain password with the hashed password
       value.password = hashedPassword;
-      console.log('PasswrodHashPipe');
       
     }
 
