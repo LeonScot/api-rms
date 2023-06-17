@@ -12,5 +12,6 @@ import { MailModule } from 'src/core/email/mail.module';
   ],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService]
 })
 export class UserModule {}
