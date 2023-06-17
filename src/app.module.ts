@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './core/database/database.module';
 import { UserModule } from './modules/users/user.module';
 import { ConfigModule } from '@nestjs/config';
-import { HashMiddleware } from './middlewares/hash.middleware';
 
 @Module({
   imports: [
@@ -18,10 +17,12 @@ import { HashMiddleware } from './middlewares/hash.middleware';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(HashMiddleware)
-      .forRoutes({ path: 'user', method: RequestMethod.POST });
-  }
-}
+export class AppModule {} 
+
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer
+//       .apply(HashMiddleware)
+//       .forRoutes({ path: 'user', method: RequestMethod.POST });
+//   }
+// }

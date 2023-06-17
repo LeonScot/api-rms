@@ -27,7 +27,9 @@
     "@nestjs/platform-express": "^9.4.3",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.3.0",
+    "nodemailer": "^6.9.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "webpack": "^5.87.0"

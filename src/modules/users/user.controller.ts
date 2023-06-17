@@ -3,13 +3,15 @@ import { UserService } from './user.service';
 import { User } from './user.schema';
 import { ApiResponse } from './../../core/api/api.interface';
 import { MongoError } from 'mongodb';
+import { AssignVerificationTokenPipe } from 'src/pipes/assign-verification-token.pipe';
+import { PasswrodHashPipe } from 'src/pipes/password-hash.pipe';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async createUser(@Body() user: User): Promise<ApiResponse<User | null>> {
+  async createUser(@Body(new AssignVerificationTokenPipe(), new PasswrodHashPipe()) user: User): Promise<ApiResponse<User | null>> {
     try {
       await this.userService.create(user);
       return {

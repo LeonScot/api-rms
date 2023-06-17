@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class HashMiddleware implements NestMiddleware {
+export class HashMiddleware_dicarted implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     // Check if the request body contains a password field
     if (req.body.password) {
