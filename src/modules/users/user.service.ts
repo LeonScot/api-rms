@@ -26,6 +26,10 @@ export class UserService {
         return this.userModel.findOne({ email }).exec();
     }
 
+    async findByVerificationCode(verificationToken: string): Promise<User> {
+        return this.userModel.findOne({ verificationToken }).exec();
+    }
+
     async update(id: string, user: User): Promise<User> {
         return this.userModel.findByIdAndUpdate(id, user, { new: true }).exec();
     }
