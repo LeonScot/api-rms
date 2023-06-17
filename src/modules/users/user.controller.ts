@@ -20,14 +20,10 @@ export class UserController {
         message: 'User created successfully',
       };
     } catch (error) {
-      
-      if (error instanceof MongoError) {
-        throw new HttpException('MongoDB Error', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
       return {
         status: 'error',
         data: null,
-        message: 'Error creating user',
+        message: error instanceof MongoError ? error.message : 'Error creating user',
       };
     }
   }
