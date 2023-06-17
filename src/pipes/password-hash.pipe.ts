@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/modules/users/user.schema';
 
 @Injectable()
-export class PasswrodHashPipe implements PipeTransform<any> {
+export class PasswordHashPipe implements PipeTransform<any> {
   async transform(value: User, metadata: ArgumentMetadata) {
     // Check if the value contains a password field
     if (value && value.password) {
