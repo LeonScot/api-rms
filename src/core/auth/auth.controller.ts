@@ -1,7 +1,6 @@
 import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Get, Request, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Credential } from './credentials.interface';
-import { AuthGuard } from './auth.guard';
 import { ApiResponse } from '../api/api.interface';
 
 @Controller('auth')
@@ -27,7 +26,6 @@ export class AuthController {
   }
 
   @Post('logout')
-  @UseGuards(AuthGuard)
   async logout(@Req() request: Request): Promise<ApiResponse<string>> {
     const token = this.extractTokenFromRequest(request);
 
@@ -50,7 +48,6 @@ export class AuthController {
     return request.headers['authorization']?.split(' ')[1] || null;
   }
 
-  @UseGuards(AuthGuard)
   @Get('profile')
   getProfile() {
     return "req.user";

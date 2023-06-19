@@ -10,10 +10,26 @@ import { jwtConstants } from './jwt.constant';
   
   @Injectable()
   export class AuthGuard implements CanActivate {
+
     constructor(private jwtService: JwtService) {}
-  
+    
     async canActivate(context: ExecutionContext): Promise<boolean> {
-      const request = context.switchToHttp().getRequest();
+      const request: Request = context.switchToHttp().getRequest();
+        
+      // Get the requested route path
+      const { path } = request.route;
+
+      // Define the routes that should be excluded from authentication
+      const excludedRoutes = ['/auth/login', '/user/verify', '/auth/forgotpass'];
+
+      // Check if the requested route should be excluded
+      const shouldExclude = excludedRoutes.some(route => path.includes(route));
+
+      if (shouldExclude) {
+        // Allow the route to pass without authentication
+        return true;
+      }
+    
       const token = this.extractTokenFromHeader(request);
       if (!token) {
         throw new UnauthorizedException();
