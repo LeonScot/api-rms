@@ -4,7 +4,7 @@ import { User } from 'src/modules/users/user.schema';
 
 @Injectable()
 export class PasswordHashPipe implements PipeTransform<any> {
-  async transform(value: User, metadata: ArgumentMetadata) {
+  async transform(value: {password: string}, metadata: ArgumentMetadata) {
     // Check if the value contains a password field
     if (value && value.password) {
       // Generate a salt and hash the password

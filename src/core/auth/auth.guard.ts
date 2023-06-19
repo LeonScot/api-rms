@@ -20,7 +20,7 @@ import { jwtConstants } from './jwt.constant';
       const { path } = request.route;
 
       // Define the routes that should be excluded from authentication
-      const excludedRoutes = ['/auth/login', '/user/verify', '/auth/forgotpass'];
+      const excludedRoutes = ['/auth/login', '/user/verify', '/auth/forgotpassword'];
 
       // Check if the requested route should be excluded
       const shouldExclude = excludedRoutes.some(route => path.includes(route));

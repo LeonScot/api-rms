@@ -2,6 +2,7 @@ import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Get, Request, 
 import { AuthService } from './auth.service';
 import { Credential } from './credentials.interface';
 import { ApiResponse } from '../api/api.interface';
+import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
 
 @Controller('auth')
 export class AuthController {
@@ -40,6 +41,35 @@ export class AuthController {
       message: 'Logged Out'
     }
     
+  }
+
+  @Post('forgotpassword')
+  async forgotpassword(@Body() body: Credential): Promise<ApiResponse<string>> {
+    await this.authService.forgotpassEmail(body.email);
+    
+    return {
+      status: 'success',
+      data: null,
+      message: 'Reset passwork link email has been sent.'
+    }
+  }
+
+  @Post('passwordreset')
+  async passwordreset(@Body(new PasswordHashPipe()) body: {resetPasswordToken: string, email: string, password: string}): Promise<ApiResponse<string>> {
+    const result = await this.authService.passwordreset(body);
+    
+    if (result === true) {
+      return {
+        status: 'success',
+        data: null,
+        message: 'Reset passwork Success.'
+      }
+    }
+    return {
+      status: 'error',
+      data: null,
+      message: 'Reset passwork failed.'
+    }
   }
 
   private extractTokenFromRequest(request: Request): string | null {
