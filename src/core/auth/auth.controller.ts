@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Get, Request, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Credential } from './credentials.interface';
-import { ApiResponse } from '../api/api.interface';
+import { ApiResponse, Response } from '../api/api.interface';
 import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
 
 @Controller('auth')
@@ -35,12 +35,7 @@ export class AuthController {
       await this.authService.revokeToken(token);
     }
 
-    return {
-      status: 'success',
-      data: null,
-      message: 'Logged Out'
-    }
-    
+    return Response('success', null, 'Logged Out');    
   }
 
   @Post('forgotpassword')

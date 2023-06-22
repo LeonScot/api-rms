@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Put, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, HttpException, HttpStatus, UseGuards, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.schema';
 import { ApiResponse } from './../../core/api/api.interface';
@@ -63,13 +63,15 @@ export class UserController {
   }
 
   @Get()
-  async findAllUsers(): Promise<ApiResponse<User[] | null>> {
+  async findAllUsers(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<User[] | null>> {
+    
     try {
-      const users = await this.userService.findAll();
+      const users = await this.userService.findAll({pageNumber, limit});
       return {
         status: 'success',
         data: users,
         message: 'Users fetched successfully',
+        totalCount: await this.userService.count()
       };
     } catch (error) {
       return {
