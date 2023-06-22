@@ -2,19 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RevokedToken } from './revoked-token.schema';
+import { CrudService } from '../api/crud.service';
 
 @Injectable()
-export class RevokedTokenService {
+export class RevokedTokenService extends CrudService<RevokedToken> {
   constructor(
     @InjectModel(RevokedToken.name) private readonly revokedTokenModel: Model<RevokedToken>,
-  ) {}
-
-  async create(token: string): Promise<RevokedToken> {
-    const revokedToken = new this.revokedTokenModel({ token });
-    return revokedToken.save();
+  ) {
+    super(revokedTokenModel);
   }
 
-  async findOne(token: string): Promise<RevokedToken | null> {
+  async findByToken(token: string): Promise<RevokedToken | null> {
     return this.revokedTokenModel.findOne({token}).exec();
   }
 

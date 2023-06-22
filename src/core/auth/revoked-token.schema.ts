@@ -6,13 +6,13 @@ export type UserDocument = HydratedDocument<RevokedToken>;
 @Schema()
 export class RevokedToken {
     
-  _id: string;
+  _id?: string;
   
   @Prop({ required: true, unique: true })
   token: string;
 
   @Prop({ default: false })
-  revokedStatus: boolean;
+  revokedStatus?: boolean;
 }
 
 export const RevokedTokenSchema = SchemaFactory.createForClass(RevokedToken);

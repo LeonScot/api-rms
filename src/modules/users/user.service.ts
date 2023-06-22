@@ -3,23 +3,13 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.schema';
+import { CrudService } from 'src/core/api/crud.service';
 
 @Injectable()
-export class UserService {
+export class UserService extends CrudService<User> {
 
-    constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
-
-    async create(user: User): Promise<User> {
-        const createdUser = new this.userModel(user);
-        return createdUser.save();
-    }
-
-    async findAll(): Promise<User[]> {
-        return this.userModel.find().exec();
-    }
-
-    async findById(id: string): Promise<User> {
-        return this.userModel.findById(id).exec();
+    constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {
+        super(userModel);
     }
     
     async findByEmail(email: string): Promise<User> {
@@ -28,13 +18,5 @@ export class UserService {
 
     async findByVerificationCode(verificationToken: string): Promise<User> {
         return this.userModel.findOne({ verificationToken }).exec();
-    }
-
-    async update(id: string, user: User): Promise<User> {
-        return this.userModel.findByIdAndUpdate(id, user, { new: true }).exec();
-    }
-
-    async delete(id: string): Promise<User> {
-        return this.userModel.findByIdAndRemove(id).exec();
     }
 }

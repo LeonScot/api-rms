@@ -6,6 +6,7 @@ import { RevokedTokenService } from './revoked-token.service';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from 'src/modules/users/user.schema';
 import { MailService } from '../email/mail.service';
+import { RevokedToken } from './revoked-token.schema';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,8 @@ export class AuthService {
             const payload = { sub: user._id, username: user.email };
 
             const  access_token = await this.jwtService.signAsync(payload);
-            this.revokedTokenService.create(access_token);
+            const revokedToken: RevokedToken = {token: access_token};
+            this.revokedTokenService.create(revokedToken);
             return access_token;
         }
         // throw new UnauthorizedException();
@@ -32,7 +34,7 @@ export class AuthService {
     }
 
     async revokeToken(token: string): Promise<void> {
-        const tokenData = await this.revokedTokenService.findOne(token);
+        const tokenData = await this.revokedTokenService.findByToken(token);
         if (tokenData.revokedStatus === false) {
             this.revokedTokenService.revokeToken(tokenData);   
         }
