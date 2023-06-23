@@ -51,6 +51,9 @@ export class User {
 
   @Prop()
   resetPasswordToken: string;
+  
+  @Prop({ default: true })
+  active: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

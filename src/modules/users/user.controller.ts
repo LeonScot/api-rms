@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Get, Param, Put, Delete, HttpException, HttpStatus, UseGuards, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './user.schema';
-import { ApiResponse } from './../../core/api/api.interface';
+import { User, UserRoleEnum } from './user.schema';
+import { ApiResponse, Response } from './../../core/api/api.interface';
 import { MongoError } from 'mongodb';
 import { AssignVerificationTokenPipe } from 'src/pipes/assign-verification-token.pipe';
 import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
@@ -63,22 +63,13 @@ export class UserController {
   }
 
   @Get()
-  async findAllUsers(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<User[] | null>> {
+  async findAllUsers(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('userType') userType: UserRoleEnum): Promise<ApiResponse<User[] | null>> {
     
     try {
-      const users = await this.userService.findAll({pageNumber, limit});
-      return {
-        status: 'success',
-        data: users,
-        message: 'Users fetched successfully',
-        totalCount: await this.userService.count()
-      };
+      const users = userType === UserRoleEnum.user ? await this.userService.getClients({pageNumber, limit}) : (userType === UserRoleEnum.admin ? await this.userService.getAdmins({pageNumber, limit}) : []);
+      return Response.OK(users, 'Users fetched successfully', await this.userService.count());
     } catch (error) {
-      return {
-        status: 'error',
-        data: null,
-        message: 'Error fetching users',
-      };
+      return Response.Error('Error fetching users');
     }
   }
 
@@ -86,20 +77,9 @@ export class UserController {
   async findUserById(@Param('id') id: string): Promise<ApiResponse<User | null>> {
     try {
       const user = await this.userService.findById(id);
-
-      console.log('findUserById', user);
-      
-      return {
-        status: 'success',
-        data: user,
-        message: 'User fetched successfully',
-      };
+      return Response.OK(user, 'User fetched successfully');
     } catch (error) {
-      return {
-        status: 'error',
-        data: null,
-        message: 'Error fetching user',
-      };
+      return Response.Error('Error fetching user');
     }
   }
 

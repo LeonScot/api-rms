@@ -4,6 +4,8 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export abstract class CrudService<T> {
 
+    public query: object;
+
     constructor(private readonly model: Model<T>) {}
 
     async create(rec: T): Promise<T> {
@@ -14,14 +16,14 @@ export abstract class CrudService<T> {
     async findAll(page?: {pageNumber: number, limit: number}): Promise<T[]> {
         if (page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
             const skip = (page.pageNumber - 1) * page.limit;
-            return this.model.find().skip(skip).limit(page.limit).exec();
+            return this.hasQuery ? this.model.find(this.query).skip(skip).limit(page.limit).exec() : this.model.find().skip(skip).limit(page.limit).exec();
         } else {
-            return this.model.find().exec();
+            return this.hasQuery ? this.model.find(this.query).exec() : this.model.find().exec();
         }
     }
 
     async count(): Promise<number> {
-        return this.model.countDocuments().exec();
+        return this.hasQuery ? this.model.countDocuments(this.query).exec() : this.model.countDocuments().exec();
     }
 
     async findById(id: string): Promise<T> {
@@ -34,5 +36,9 @@ export abstract class CrudService<T> {
 
     async delete(id: string): Promise<T> {
         return this.model.findByIdAndRemove(id).exec();
+    }
+
+    private get hasQuery() {
+        return Object.keys(this.query).length > 0 ? true : false;
     }
 }
