@@ -19,7 +19,7 @@ import { MailService } from './mail.service';
         },
       },
       defaults: {
-        from: '"No Reply" <dmcawahab@gmail.com>',
+        from: '"RMS Org" <dmcawahab@gmail.com>',
       },
       // template: {
       //   dir: join(__dirname, 'templates'),
