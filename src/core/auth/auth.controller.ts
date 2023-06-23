@@ -13,17 +13,9 @@ export class AuthController {
   async login(@Body() body: Credential): Promise<ApiResponse<string | null>> {
     const response = await this.authService.validateUser(body.email, body.password);
     if (response === undefined) {
-        return {
-            data: null,
-            status: 'error',
-            message: "Log in failed"
-        };
+        return Response.Error("Log in failed");
     }
-    return {
-        data: response,
-        status: 'success',
-        message: "Logged In"
-    };
+    return Response.OK(response, "Logged In");
   }
 
   @Post('logout')
@@ -34,19 +26,14 @@ export class AuthController {
       // Revoke the token
       await this.authService.revokeToken(token);
     }
-
-    return Response('success', null, 'Logged Out');    
+    return Response.OK(null, 'Logged Out');    
   }
 
   @Post('forgotpassword')
   async forgotpassword(@Body() body: Credential): Promise<ApiResponse<string>> {
     await this.authService.forgotpassEmail(body.email);
     
-    return {
-      status: 'success',
-      data: null,
-      message: 'Reset passwork link email has been sent.'
-    }
+    return Response.OK(null, 'Reset passwork link email has been sent.');
   }
 
   @Post('passwordreset')
@@ -54,17 +41,9 @@ export class AuthController {
     const result = await this.authService.passwordreset(body);
     
     if (result === true) {
-      return {
-        status: 'success',
-        data: null,
-        message: 'Reset passwork Success.'
-      }
+      return Response.OK(null, 'Reset passwork Success.');
     }
-    return {
-      status: 'error',
-      data: null,
-      message: 'Reset passwork failed.'
-    }
+    return Response.Error('Reset passwork failed.');
   }
 
   private extractTokenFromRequest(request: Request): string | null {
