@@ -39,6 +39,6 @@ export abstract class CrudService<T> {
     }
 
     private get hasQuery() {
-        return Object.keys(this.query).length > 0 ? true : false;
+        return this.query ? (Object.keys(this.query).length > 0 ? true : false) : false;
     }
 }

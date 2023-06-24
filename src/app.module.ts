@@ -9,11 +9,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './core/auth/jwt.constant';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './core/auth/auth.guard';
+import { SubscriptionModule } from './modules/subscription/subscription.module';
 
 @Module({
   imports: [
     DatabaseModule,
     UserModule,
+    SubscriptionModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true
