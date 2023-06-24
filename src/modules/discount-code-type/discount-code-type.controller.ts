@@ -26,6 +26,8 @@ export class DiscountCodeTypeController {
       const discountCodeTypes = await this.discountCodeTypeService.findAll({pageNumber, limit});
       return Response.OK(discountCodeTypes, 'DiscountCodeTypes fetched successfully', await this.discountCodeTypeService.count());
     } catch (error) {
+      console.log(error);
+      
       return Response.Error('Error fetching DiscountCodeTypes');
     }
   }

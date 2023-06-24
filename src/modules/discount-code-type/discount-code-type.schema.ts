@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Subscription } from '../subscription/subscription.schema';
 
 export type DiscountCodeTypeDocument = HydratedDocument<DiscountCodeType>;
 
@@ -33,8 +34,8 @@ export class DiscountCodeType {
   @Prop({ default: true})
   active: boolean;
 
-  @Prop({required: true})
-  subscriptionId: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Subscription' })
+  subscription: Subscription;
 }
 
 export const DiscountCodeTypeSchema = SchemaFactory.createForClass(DiscountCodeType);

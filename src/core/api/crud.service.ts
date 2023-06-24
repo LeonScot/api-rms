@@ -6,6 +6,8 @@ export abstract class CrudService<T> {
 
     public query: object;
 
+    public refObjectNames: string[] = [];
+
     constructor(private readonly model: Model<T>) {}
 
     async create(rec: T): Promise<T> {
@@ -16,9 +18,9 @@ export abstract class CrudService<T> {
     async findAll(page?: {pageNumber: number, limit: number}): Promise<T[]> {
         if (page && page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
             const skip = (page.pageNumber - 1) * page.limit;
-            return this.hasQuery ? this.model.find(this.query).skip(skip).limit(page.limit).exec() : this.model.find().skip(skip).limit(page.limit).exec();
+            return this.hasQuery ? this.model.find(this.query).populate(this.refObjectNames).skip(skip).limit(page.limit).exec() : this.model.find().populate(this.refObjectNames).skip(skip).limit(page.limit).exec();
         } else {
-            return this.hasQuery ? this.model.find(this.query).exec() : this.model.find().exec();
+            return this.hasQuery ? this.model.find(this.query).populate(this.refObjectNames).exec() : this.model.find().populate(this.refObjectNames).exec();
         }
     }
 
@@ -38,7 +40,7 @@ export abstract class CrudService<T> {
         return this.model.findByIdAndRemove(id).exec();
     }
 
-    private get hasQuery() {
+    public get hasQuery() {
         return this.query ? (Object.keys(this.query).length > 0 ? true : false) : false;
     }
 }
