@@ -14,7 +14,7 @@ export abstract class CrudService<T> {
     }
 
     async findAll(page?: {pageNumber: number, limit: number}): Promise<T[]> {
-        if (page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
+        if (page && page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
             const skip = (page.pageNumber - 1) * page.limit;
             return this.hasQuery ? this.model.find(this.query).skip(skip).limit(page.limit).exec() : this.model.find().skip(skip).limit(page.limit).exec();
         } else {

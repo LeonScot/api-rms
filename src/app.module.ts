@@ -10,22 +10,24 @@ import { jwtConstants } from './core/auth/jwt.constant';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './core/auth/auth.guard';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
+import { DiscountCodeTypeModule } from './modules/discount-code-type/discount-code-type.module';
 
 @Module({
   imports: [
-    DatabaseModule,
-    UserModule,
-    SubscriptionModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true
     }),
-    AuthModule,
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '1h' },
     }),
+    DatabaseModule,
+    UserModule,
+    AuthModule,
+    SubscriptionModule,
+    DiscountCodeTypeModule
   ],
   controllers: [AppController],
   providers: [
