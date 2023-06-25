@@ -34,7 +34,7 @@ export class DiscountCodeType {
   @Prop({ default: true})
   active: boolean;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Subscription' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Subscription.name })
   subscription: Subscription;
 }
 

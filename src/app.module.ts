@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './core/auth/auth.guard';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { DiscountCodeTypeModule } from './modules/discount-code-type/discount-code-type.module';
+import { UserSubscriptionModule } from './modules/user-subscription/user-subscription.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { DiscountCodeTypeModule } from './modules/discount-code-type/discount-co
     UserModule,
     AuthModule,
     SubscriptionModule,
-    DiscountCodeTypeModule
+    DiscountCodeTypeModule,
+    UserSubscriptionModule
   ],
   controllers: [AppController],
   providers: [
