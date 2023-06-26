@@ -45,8 +45,8 @@ export class UserController {
   async findAllUsers(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('userType') userType: UserRoleEnum): Promise<ApiResponse<User[] | null>> {
     
     try {
-      const users = userType === UserRoleEnum.user ? await this.userService.getClients({pageNumber, limit}) : (userType === UserRoleEnum.admin ? await this.userService.getAdmins({pageNumber, limit}) : []);
-      return Response.OK(users, 'Users fetched successfully', await this.userService.count());
+      const users = userType === UserRoleEnum.user ? await this.userService.getClients({pageNumber, limit}) : (userType === UserRoleEnum.admin ? await this.userService.getAdmins({pageNumber, limit}) : {data: [], totalCount: 0});
+      return Response.OK(users.data, 'Users fetched successfully', users.totalCount);
     } catch (error) {
       return Response.Error('Error fetching users');
     }

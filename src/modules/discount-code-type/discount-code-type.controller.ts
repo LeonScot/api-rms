@@ -24,7 +24,7 @@ export class DiscountCodeTypeController {
     
     try {
       const discountCodeTypes = await this.discountCodeTypeService.findAll({pageNumber, limit});
-      return Response.OK(discountCodeTypes, 'DiscountCodeTypes fetched successfully', await this.discountCodeTypeService.count());
+      return Response.OK(discountCodeTypes.data, 'DiscountCodeTypes fetched successfully', discountCodeTypes.totalCount);
     } catch (error) {
       console.log(error);
       

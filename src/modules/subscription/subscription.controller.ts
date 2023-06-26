@@ -24,7 +24,7 @@ export class SubscriptionController {
       
       try {
         const subscriptions = await this.subscriptionService.findAll({pageNumber, limit});
-        return Response.OK(subscriptions, 'Subscriptions fetched successfully', await this.subscriptionService.count());
+        return Response.OK(subscriptions.data, 'Subscriptions fetched successfully', await subscriptions.totalCount);
       } catch (error) {
         return Response.Error('Error fetching Subscriptions');
       }

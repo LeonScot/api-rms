@@ -15,12 +15,18 @@ export abstract class CrudService<T> {
         return createdRec.save();
     }
 
-    async findAll(page?: {pageNumber: number, limit: number}): Promise<T[]> {
+    async findAll(page?: {pageNumber: number, limit: number}): Promise<{data: T[], totalCount: number}> {
         if (page && page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
             const skip = (page.pageNumber - 1) * page.limit;
-            return this.model.find(this.query).populate(this.refObjectNames).skip(skip).limit(page.limit).exec();
+            return {
+                data: await this.model.find(this.query).populate(this.refObjectNames).skip(skip).limit(page.limit).exec(),
+                totalCount: await this.count()
+            };
         } else {
-            return this.model.find(this.query).populate(this.refObjectNames).exec();
+            return {
+                data: await this.model.find(this.query).populate(this.refObjectNames).exec(),
+                totalCount: await this.count()
+            };
         }
     }
 
