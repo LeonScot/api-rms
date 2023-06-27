@@ -44,6 +44,6 @@ export class UserSubscription {
 export const UserSubscriptionSchema = SchemaFactory.createForClass(UserSubscription);
 
 UserSubscriptionSchema.pre<UserSubscriptionDocument>('findOneAndUpdate', function (next) {
-  this.set({ updatedDate: Date.now });
+  this.set({ updatedDate: new Date() });
   next();
 });

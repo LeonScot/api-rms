@@ -24,6 +24,6 @@ export class RevokedToken {
 export const RevokedTokenSchema = SchemaFactory.createForClass(RevokedToken);
 
 RevokedTokenSchema.pre<RevokedTokenDocument>('findOneAndUpdate', function (next) {
-  this.set({ updatedDate: Date.now });
+  this.set({ updatedDate: new Date() });
   next();
 });

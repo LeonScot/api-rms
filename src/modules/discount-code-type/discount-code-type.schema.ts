@@ -46,7 +46,7 @@ export class DiscountCodeType {
 export const DiscountCodeTypeSchema = SchemaFactory.createForClass(DiscountCodeType);
 
 DiscountCodeTypeSchema.pre<DiscountCodeTypeDocument>('findOneAndUpdate', function (next) {
-  this.set({ updatedDate: Date.now });
+  this.set({ updatedDate: new Date() });
   next();
 });
 

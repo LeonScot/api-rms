@@ -65,6 +65,6 @@ export class User {
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.pre<UserDocument>('findOneAndUpdate', function (next) {
-  this.set({ updatedDate: Date.now });
+  this.set({ updatedDate: new Date() });
   next();
 });
