@@ -24,9 +24,6 @@ export class UserSubscription {
 
   @Prop({ default: false})
   expired: boolean;
-
-  @Prop({ required: true, type: Date, default: Date.now})
-  createDate: boolean;
   
   @Prop({ default: true})
   active: boolean;
@@ -36,6 +33,17 @@ export class UserSubscription {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Subscription.name })
   subscription: Subscription;
+
+  @Prop({ type: Date, default: Date.now})
+  createdDate: Date;
+  
+  @Prop({ type: Date })
+  updatedDate: Date;
 }
 
 export const UserSubscriptionSchema = SchemaFactory.createForClass(UserSubscription);
+
+UserSubscriptionSchema.pre<UserSubscriptionDocument>('findOneAndUpdate', function (next) {
+  this.set({ updatedDate: Date.now });
+  next();
+});

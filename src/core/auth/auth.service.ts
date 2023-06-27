@@ -19,7 +19,7 @@ export class AuthService {
             const { password, ...result } = user;
             const payload = { sub: user._id, username: user.email, role: user.role };
 
-            const  access_token = await this.jwtService.signAsync(payload);
+            const access_token = await this.jwtService.signAsync(payload);
             const revokedToken: RevokedToken = {token: access_token};
             this.revokedTokenService.create(revokedToken);
             return access_token;

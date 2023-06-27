@@ -47,6 +47,8 @@ export class SubscriptionController {
       const updatedSubscription = await this.subscriptionService.update(id, subscription);
       return Response.OK(updatedSubscription, 'Subscription updated successfully');
     } catch (error) {
+      console.log(error);
+      
       return Response.Error('Error updating subscription');
     }
   }

@@ -22,6 +22,17 @@ export class Subscription {
 
   @Prop({ default: true})
   active: boolean;
+
+  @Prop({ type: Date, default: Date.now})
+  createdDate: Date;
+  
+  @Prop({ type: Date, default: Date.now })
+  updatedDate: Date;
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(Subscription);
+
+SubscriptionSchema.pre<SubscriptionDocument>('findOneAndUpdate', function (next) {
+  this.set({ updatedDate: new Date() });
+  next();
+});

@@ -36,6 +36,18 @@ export class DiscountCodeType {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Subscription.name })
   subscription: Subscription;
-}
 
+  @Prop({ type: Date, default: Date.now})
+  createdDate: Date;
+  
+  @Prop({ type: Date })
+  updatedDate: Date;
+}
 export const DiscountCodeTypeSchema = SchemaFactory.createForClass(DiscountCodeType);
+
+DiscountCodeTypeSchema.pre<DiscountCodeTypeDocument>('findOneAndUpdate', function (next) {
+  this.set({ updatedDate: Date.now });
+  next();
+});
+
+
