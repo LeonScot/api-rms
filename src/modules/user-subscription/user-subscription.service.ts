@@ -5,11 +5,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserSubscription } from './user-subscription.schema';
 import { CrudService } from 'src/core/api/crud.service';
 import { Subscription } from '../subscription/subscription.schema';
+import { User } from '../users/user.schema';
 
 @Injectable()
 export class UserSubscriptionService extends CrudService<UserSubscription> {
 
-    public refObjectNames: string[] = [Subscription.name.toLowerCase()];
+    public refObjectNames: string[] = [Subscription.name.toLowerCase(), User.name.toLowerCase()];
 
     constructor(@InjectModel(UserSubscription.name) private readonly userSubscriptionModel: Model<UserSubscription>) {
         super(userSubscriptionModel);

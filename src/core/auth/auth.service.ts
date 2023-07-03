@@ -6,7 +6,7 @@ import { RevokedTokenService } from './revoked-token.service';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from 'src/modules/users/user.schema';
 import { MailService } from '../email/mail.service';
-import { RevokedToken } from './revoked-token.schema';
+import { RevokedToken, TokenPayload } from './revoked-token.schema';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +17,7 @@ export class AuthService {
         if (user && user.verified === true && this.comparePasswords(password, user.password)) {
 
             const { password, ...result } = user;
-            const payload = { sub: user._id, username: user.email, role: user.role };
+            const payload: TokenPayload = { sub: user._id, username: user.email, role: user.role };
 
             const access_token = await this.jwtService.signAsync(payload);
             const revokedToken: RevokedToken = {token: access_token};

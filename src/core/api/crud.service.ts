@@ -38,6 +38,10 @@ export abstract class CrudService<T> {
         return this.model.findById(id).exec();
     }
 
+    async findOneByQuery(query: object = {}) {
+        return this.model.findOne(query).populate(this.refObjectNames).exec();
+    }
+
     async update(id: string, rec: T): Promise<T> {
         return this.model.findByIdAndUpdate(id, rec, { new: true }).exec();
     }

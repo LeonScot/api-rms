@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Date, HydratedDocument } from 'mongoose';
+import mongoose, {  HydratedDocument } from 'mongoose';
 import { Subscription } from '../subscription/subscription.schema';
 import { User } from '../users/user.schema';
 
@@ -8,7 +8,7 @@ export type UserSubscriptionDocument = HydratedDocument<UserSubscription>;
 @Schema()
 export class UserSubscription {
   
-  _id: string;
+  _id?: string;
 
   @Prop({ required: true, unique: true })
   uniqueCode: string;
@@ -23,22 +23,25 @@ export class UserSubscription {
   autoRenew: boolean;
 
   @Prop({ default: false})
-  expired: boolean;
+  expired?: boolean;
+
+  @Prop({ default: false})
+  unsubscribed?: boolean;
   
   @Prop({ default: true})
-  active: boolean;
+  active?: boolean;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
-  user: User;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name})
+  user: User | string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Subscription.name })
-  subscription: Subscription;
+  subscription: Subscription | string;
 
   @Prop({ type: Date, default: Date.now})
-  createdDate: Date;
+  createdDate?: Date;
   
   @Prop({ type: Date })
-  updatedDate: Date;
+  updatedDate?: Date;
 }
 
 export const UserSubscriptionSchema = SchemaFactory.createForClass(UserSubscription);
