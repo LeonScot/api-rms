@@ -1,1 +1,1 @@
-web: ls- l && npm run build &&  ls -l dist && npm run start:prodhero
+web: ls -l && npm run build &&  ls -l dist && npm run start:prodhero
