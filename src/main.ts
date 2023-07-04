@@ -8,6 +8,6 @@ async function bootstrap() {
 
   // Additional configurations, middleware, etc.
 
-  await app.listen(process.env.PORT || 3000, "0.0.0.0");
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
