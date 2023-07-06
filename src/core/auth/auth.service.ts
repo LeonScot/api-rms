@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RevokedTokenService } from './revoked-token.service';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from 'src/modules/users/user.schema';
+import { User, UserRoleEnum } from 'src/modules/users/user.schema';
 import { MailService } from '../email/mail.service';
 import { RevokedToken, TokenPayload } from './revoked-token.schema';
 
@@ -12,8 +12,8 @@ import { RevokedToken, TokenPayload } from './revoked-token.schema';
 export class AuthService {
     constructor(private userService: UserService, private jwtService: JwtService, private revokedTokenService: RevokedTokenService, private mailService: MailService) {}
 
-    async validateUser(email: string, password: string): Promise<string | null> {
-        const user = await this.userService.findByEmail(email);
+    async validateUser(email: string, password: string, role: UserRoleEnum): Promise<string | null> {
+        const user = await this.userService.findByEmailnRole(email, role);
         if (user && user.verified === true && this.comparePasswords(password, user.password)) {
 
             const { password, ...result } = user;

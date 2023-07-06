@@ -24,6 +24,10 @@ export class UserService extends CrudService<User> {
         return this.findAll(page);
     }
     
+    async findByEmailnRole(email: string, role: UserRoleEnum): Promise<User> {
+        return this.userModel.findOne({ email, role }).exec();
+    }
+    
     async findByEmail(email: string): Promise<User> {
         return this.userModel.findOne({ email }).exec();
     }
