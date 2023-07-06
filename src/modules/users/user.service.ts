@@ -25,7 +25,7 @@ export class UserService extends CrudService<User> {
     }
     
     async findByEmailnRole(email: string, role: UserRoleEnum): Promise<User> {
-        return this.userModel.findOne({ email, role }).exec();
+        return this.userModel.findOne({ email, role, active: true }).exec();
     }
     
     async findByEmail(email: string): Promise<User> {
