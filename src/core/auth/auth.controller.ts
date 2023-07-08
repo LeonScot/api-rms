@@ -14,7 +14,7 @@ export class AuthController {
   async login(@Body() body: Credential): Promise<ApiResponse<string | null>> {
     const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.user);
     if (response === undefined) {
-        return Response.Error("Log in failed");
+      return Response.Error("Log in failed");
     }
     return Response.OK(response, "Logged In");
   }
@@ -24,7 +24,7 @@ export class AuthController {
   async loginAdmin(@Body() body: Credential): Promise<ApiResponse<string | null>> {
     const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.admin);
     if (response === undefined) {
-        return Response.Error("Log in failed");
+      return Response.Error("Log in failed");
     }
     return Response.OK(response, "Logged In");
   }
@@ -61,10 +61,5 @@ export class AuthController {
     // Extract the token from the request headers, query parameters, or cookies
     // Implement your own logic to extract the token based on your application's requirements
     return request.headers['authorization']?.split(' ')[1] || null;
-  }
-
-  @Get('profile')
-  getProfile() {
-    return "req.user";
   }
 }
