@@ -33,7 +33,7 @@ export class UserSubscriptionController {
     
     try {
       this.userSubscriptionService.query = query;
-      const userSubscriptions = await this.userSubscriptionService.findAll({pageNumber, limit});
+      const userSubscriptions = await this.userSubscriptionService.findAll({pageNumber, limit}, {field: 'createdDate', order: 'desc'});
       return Response.OK(userSubscriptions.data, 'UserSubscriptions fetched successfully', userSubscriptions.totalCount);
     } catch (error) {
       return Response.Error('Error fetching UserSubscriptions');

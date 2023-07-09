@@ -15,19 +15,29 @@ export abstract class CrudService<T> {
         return createdRec.save();
     }
 
-    async findAll(page?: {pageNumber: number, limit: number}): Promise<{data: T[], totalCount: number}> {
-        if (page && page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
-            const skip = (page.pageNumber - 1) * page.limit;
-            return {
-                data: await this.model.find(this.query).populate(this.refObjectNames).skip(skip).limit(page.limit).exec(),
-                totalCount: await this.count()
-            };
-        } else {
-            return {
-                data: await this.model.find(this.query).populate(this.refObjectNames).exec(),
-                totalCount: await this.count()
-            };
+    async findAll(page?: { pageNumber: number; limit: number }, sort?: { field: string; order: 'asc' | 'desc' } ): Promise<{ data: T[]; totalCount: number }> {
+        const query = this.model.find(this.query);
+        
+        // Apply sorting if sort options are provided
+        if (sort) {
+          const { field, order } = sort;
+          const sortOrder = order === 'desc' ? -1 : 1;
+          query.sort({ [field]: sortOrder });
         }
+        
+        // Apply pagination if page options are provided
+        if (page && page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
+          const skip = (page.pageNumber - 1) * page.limit;
+          query.skip(skip).limit(page.limit);
+        }
+        
+        // Execute the query and populate reference objects
+        const data = await query.populate(this.refObjectNames).exec();
+        
+        // Count the total number of documents
+        const totalCount = await this.count();
+        
+        return { data, totalCount };
     }
 
     async count(): Promise<number> {
