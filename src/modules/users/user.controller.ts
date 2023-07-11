@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Put, Delete, HttpException, HttpStatus, UseGuards, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, UserRoleEnum } from './user.schema';
 import { ApiResponse, Response } from './../../core/api/api.interface';
@@ -16,17 +16,9 @@ export class UserController {
     try {
       await this.userService.create(user);
       await this.mailService.sendUserConfirmation(user);
-      return {
-        status: 'success',
-        data: user,
-        message: 'User created successfully',
-      };
+      return Response.OK(user, 'User created successfully');
     } catch (error) {
-      return {
-        status: 'error',
-        data: null,
-        message: error instanceof MongoError ? error.message : 'Error creating user',
-      };
+      return Response.Error(error instanceof MongoError ? error.message : 'Error creating user');
     }
   }
 
@@ -39,25 +31,12 @@ export class UserController {
       if (user.verified === false) {
         user.verified = true;
         await this.userService.update(user._id, user);
-        
-        return {
-          status: 'success',
-          data: "user",
-          message: 'User verified successfully',
-        };
+        return Response.OK(null, 'User verified successfully');
       } else {
-        return {
-          status: 'success',
-          data: "user",
-          message: 'User already verified',
-        };
+        return Response.OK(null, 'User already verified');
       }
     } catch (error) {
-      return {
-        status: 'error',
-        data: null,
-        message: error instanceof MongoError ? error.message : 'Error creating user',
-      };
+      return Response.Error(error instanceof MongoError ? error.message : 'Error in verifying user');
       
     }
   }
@@ -66,8 +45,8 @@ export class UserController {
   async findAllUsers(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('userType') userType: UserRoleEnum): Promise<ApiResponse<User[] | null>> {
     
     try {
-      const users = userType === UserRoleEnum.user ? await this.userService.getClients({pageNumber, limit}) : (userType === UserRoleEnum.admin ? await this.userService.getAdmins({pageNumber, limit}) : []);
-      return Response.OK(users, 'Users fetched successfully', await this.userService.count());
+      const users = userType === UserRoleEnum.user ? await this.userService.getClients({pageNumber, limit}) : (userType === UserRoleEnum.admin ? await this.userService.getAdmins({pageNumber, limit}) : {data: [], totalCount: 0});
+      return Response.OK(users.data, 'Users fetched successfully', users.totalCount);
     } catch (error) {
       return Response.Error('Error fetching users');
     }
@@ -87,19 +66,9 @@ export class UserController {
   async updateUser(@Param('id') id: string, @Body() user: User): Promise<ApiResponse<User | null>> {
     try {
       const updatedUser = await this.userService.update(id, user);
-      return {
-        status: 'success',
-        data: updatedUser,
-        message: 'User updated successfully',
-      };
+      return Response.OK(updatedUser, 'User updated successfully');
     } catch (error) {
-      console.log(error);
-      
-      return {
-        status: 'error',
-        data: null,
-        message: 'Error updating user',
-      };
+      return Response.Error('Error updating user');
     }
   }
 
@@ -107,17 +76,9 @@ export class UserController {
   async deleteUser(@Param('id') id: string): Promise<ApiResponse<User | null>> {
     try {
       const deletedUser = await this.userService.delete(id);
-      return {
-        status: 'success',
-        data: deletedUser,
-        message: 'User deleted successfully',
-      };
+      return Response.OK(deletedUser, 'User deleted successfully');
     } catch (error) {
-      return {
-        status: 'error',
-        data: null,
-        message: 'Error deleting user',
-      };
+      return Response.Error('Error deleting user');
     }
   }
 }

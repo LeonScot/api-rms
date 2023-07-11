@@ -4,7 +4,9 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export abstract class CrudService<T> {
 
-    public query: object;
+    public query: object = {};
+
+    public refObjectNames: string[] = [];
 
     constructor(private readonly model: Model<T>) {}
 
@@ -13,21 +15,41 @@ export abstract class CrudService<T> {
         return createdRec.save();
     }
 
-    async findAll(page?: {pageNumber: number, limit: number}): Promise<T[]> {
-        if (page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
-            const skip = (page.pageNumber - 1) * page.limit;
-            return this.hasQuery ? this.model.find(this.query).skip(skip).limit(page.limit).exec() : this.model.find().skip(skip).limit(page.limit).exec();
-        } else {
-            return this.hasQuery ? this.model.find(this.query).exec() : this.model.find().exec();
+    async findAll(page?: { pageNumber: number; limit: number }, sort?: { field: string; order: 'asc' | 'desc' } ): Promise<{ data: T[]; totalCount: number }> {
+        const query = this.model.find(this.query);
+        
+        // Apply sorting if sort options are provided
+        if (sort) {
+          const { field, order } = sort;
+          const sortOrder = order === 'desc' ? -1 : 1;
+          query.sort({ [field]: sortOrder });
         }
+        
+        // Apply pagination if page options are provided
+        if (page && page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
+          const skip = (page.pageNumber - 1) * page.limit;
+          query.skip(skip).limit(page.limit);
+        }
+        
+        // Execute the query and populate reference objects
+        const data = await query.populate(this.refObjectNames).exec();
+        
+        // Count the total number of documents
+        const totalCount = await this.count();
+        
+        return { data, totalCount };
     }
 
     async count(): Promise<number> {
-        return this.hasQuery ? this.model.countDocuments(this.query).exec() : this.model.countDocuments().exec();
+        return this.model.countDocuments(this.query).exec();
     }
 
     async findById(id: string): Promise<T> {
         return this.model.findById(id).exec();
+    }
+
+    async findOneByQuery(query: object = {}) {
+        return this.model.findOne(query).populate(this.refObjectNames).exec();
     }
 
     async update(id: string, rec: T): Promise<T> {
@@ -38,7 +60,7 @@ export abstract class CrudService<T> {
         return this.model.findByIdAndRemove(id).exec();
     }
 
-    private get hasQuery() {
-        return Object.keys(this.query).length > 0 ? true : false;
+    public get hasQuery() {
+        return this.query ? (Object.keys(this.query).length > 0 ? true : false) : false;
     }
 }

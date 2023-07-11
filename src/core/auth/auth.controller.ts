@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { Credential } from './credentials.interface';
 import { ApiResponse, Response } from '../api/api.interface';
 import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
+import { UserRoleEnum } from 'src/modules/users/user.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -11,9 +12,19 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() body: Credential): Promise<ApiResponse<string | null>> {
-    const response = await this.authService.validateUser(body.email, body.password);
+    const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.user);
     if (response === undefined) {
-        return Response.Error("Log in failed");
+      return Response.Error("Log in failed");
+    }
+    return Response.OK(response, "Logged In");
+  }
+  
+  @HttpCode(HttpStatus.OK)
+  @Post('login/admin')
+  async loginAdmin(@Body() body: Credential): Promise<ApiResponse<string | null>> {
+    const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.admin);
+    if (response === undefined) {
+      return Response.Error("Log in failed");
     }
     return Response.OK(response, "Logged In");
   }
@@ -50,10 +61,5 @@ export class AuthController {
     // Extract the token from the request headers, query parameters, or cookies
     // Implement your own logic to extract the token based on your application's requirements
     return request.headers['authorization']?.split(' ')[1] || null;
-  }
-
-  @Get('profile')
-  getProfile() {
-    return "req.user";
   }
 }

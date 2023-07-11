@@ -54,6 +54,17 @@ export class User {
   
   @Prop({ default: true })
   active: boolean;
+
+  @Prop({ type: Date, default: Date.now})
+  createdDate: Date;
+  
+  @Prop({ type: Date })
+  updatedDate: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre<UserDocument>('findOneAndUpdate', function (next) {
+  this.set({ updatedDate: new Date() });
+  next();
+});
