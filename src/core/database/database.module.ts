@@ -1,7 +1,7 @@
 // database.module.ts
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-console.log('process.env.DB_URI', process.env.DB_URI);
+// console.log('process.env.DB_URI', process.env.DB_URI);
 
 @Module({
   imports: [

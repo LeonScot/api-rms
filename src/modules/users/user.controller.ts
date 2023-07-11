@@ -1,11 +1,11 @@
-import { Controller, Post, Body, Get, Param, Put, Delete, HttpException, HttpStatus, UseGuards, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, UserRoleEnum } from './user.schema';
 import { ApiResponse, Response } from './../../core/api/api.interface';
 import { MongoError } from 'mongodb';
-import { AssignVerificationTokenPipe } from 'src/pipes/assign-verification-token.pipe';
-import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
-import { MailService } from 'src/core/email/mail.service';
+import { AssignVerificationTokenPipe } from './../../pipes/assign-verification-token.pipe';
+import { PasswordHashPipe } from './../../pipes/password-hash.pipe';
+import { MailService } from './../../core/email/mail.service';
 
 @Controller('user')
 export class UserController {
