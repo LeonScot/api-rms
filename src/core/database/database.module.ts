@@ -5,7 +5,7 @@ console.log('process.env.DB_URI', process.env.DB_URI);
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://dmcawahab:i3RJ4Jl0PGDhalNA@cluster0.3dk8ogi.mongodb.net/rms-db', {
+    MongooseModule.forRoot(process.env.DB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     }),
