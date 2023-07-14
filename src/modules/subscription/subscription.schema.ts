@@ -20,6 +20,9 @@ export class Subscription {
   @Prop({ required: true})
   tenure: number;
 
+  @Prop({ required: true})
+  image: string;
+
   @Prop({ default: true})
   active: boolean;
 
