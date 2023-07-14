@@ -12,11 +12,14 @@ import { AuthGuard } from './core/auth/auth.guard';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { DiscountCodeTypeModule } from './modules/discount-code-type/discount-code-type.module';
 import { UserSubscriptionModule } from './modules/user-subscription/user-subscription.module';
+import { AttachmentModule } from './modules/attachment/attachment.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: 'environments/.env',
       isGlobal: true
     }),
     JwtModule.register({
@@ -24,12 +27,17 @@ import { UserSubscriptionModule } from './modules/user-subscription/user-subscri
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '1h' },
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'), // Specify the directory where uploaded files are stored
+      serveRoot: '/uploads', // Specify the base URL path for serving the static files
+    }),
     DatabaseModule,
     UserModule,
     AuthModule,
     SubscriptionModule,
     DiscountCodeTypeModule,
-    UserSubscriptionModule
+    UserSubscriptionModule,
+    AttachmentModule
   ],
   controllers: [AppController],
   providers: [
