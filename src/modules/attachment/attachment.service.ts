@@ -98,4 +98,9 @@ export class AttachmentService extends CrudService<Attachment> {
     
     return attachments;
   }
+
+  async findByUrl(url : string) {
+    const attachment = await this.findOneByQuery({url});
+    return attachment;
+  }
 }
