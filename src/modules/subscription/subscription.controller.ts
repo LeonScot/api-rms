@@ -12,7 +12,7 @@ export class SubscriptionController {
     @Post()
     async create(@Body() subscription: Subscription): Promise<ApiResponse<Subscription | null>> {
       try {
-        await this.subscriptionService.create(subscription);
+        await this.subscriptionService.createHasFile(subscription);
         return Response.OK(subscription, 'Subscription created successfully');
       } catch (error) {
         return Response.Error(error instanceof MongoError ? error.message : 'Error creating Subscription');
