@@ -15,6 +15,7 @@ import { UserSubscriptionModule } from './modules/user-subscription/user-subscri
 import { AttachmentModule } from './modules/attachment/attachment.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CampaignModule } from './modules/campaign/campaign.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { join } from 'path';
     SubscriptionModule,
     DiscountCodeTypeModule,
     UserSubscriptionModule,
-    AttachmentModule
+    AttachmentModule,
+    CampaignModule
   ],
   controllers: [AppController],
   providers: [
