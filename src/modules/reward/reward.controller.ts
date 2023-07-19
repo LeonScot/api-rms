@@ -1,43 +1,33 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { RewardService } from './reward.service';
 import { Reward } from './reward.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
-import { Request } from 'express';
-import { JwtPayload } from 'src/core/auth/jwt.model';
-import { UserRoleEnum } from '../users/user.schema';
 
 @Controller('reward')
 export class RewardController {
 
-    constructor(private rewardService: RewardService) { }
+  constructor(private rewardService: RewardService) { }
 
-    @Post()
-    async create(@Body() reward: Reward): Promise<ApiResponse<Reward | null>> {
-      try {
-        await this.rewardService.createHasFile(reward);
-        return Response.OK(reward, 'Reward created successfully');
-      } catch (error) {
-        return Response.Error(error instanceof MongoError ? error.message : 'Error creating Reward');
-      }
+  @Post()
+  async create(@Body() reward: Reward): Promise<ApiResponse<Reward | null>> {
+    try {
+      await this.rewardService.createHasFile(reward);
+      return Response.OK(reward, 'Reward created successfully');
+    } catch (error) {
+      return Response.Error(error instanceof MongoError ? error.message : 'Error creating Reward');
     }
+  }
 
-    @Get()
-    async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<Reward[] | null>> {
-      const user: JwtPayload = request['user'];
-      this.rewardService.query = user.role === UserRoleEnum.user ?  {
-        $and: [
-          { startDate: { $lte: new Date() } },
-          { endDate: { $gte: new Date() } },
-        ],
-      } : {};
-      try {
-        const rewards = await this.rewardService.findAll({pageNumber, limit});
-        return Response.OK(rewards.data, 'Rewards fetched successfully', await rewards.totalCount);
-      } catch (error) {
-        return Response.Error('Error fetching Rewards');
-      }
+  @Get()
+  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<Reward[] | null>> {
+    try {
+      const rewards = await this.rewardService.findAll({pageNumber, limit});
+      return Response.OK(rewards.data, 'Rewards fetched successfully', await rewards.totalCount);
+    } catch (error) {
+      return Response.Error('Error fetching Rewards');
     }
+  }
 
     
   @Get(':id')
