@@ -1,8 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { CampaignService } from './campaign.service';
 import { Campaign } from './campaign.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
+import { Request } from 'express';
+import { JwtPayload } from 'src/core/auth/jwt.model';
+import { UserRoleEnum } from '../users/user.schema';
 
 @Controller('campaign')
 export class CampaignController {
@@ -20,8 +23,14 @@ export class CampaignController {
     }
 
     @Get()
-    async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<Campaign[] | null>> {
-      
+    async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<Campaign[] | null>> {
+      const user: JwtPayload = request['user'];
+      this.campaignService.query = user.role === UserRoleEnum.user ?  {
+        $and: [
+          { startDate: { $lte: new Date() } },
+          { endDate: { $gte: new Date() } },
+        ],
+      } : {};
       try {
         const campaigns = await this.campaignService.findAll({pageNumber, limit});
         return Response.OK(campaigns.data, 'Campaigns fetched successfully', await campaigns.totalCount);
