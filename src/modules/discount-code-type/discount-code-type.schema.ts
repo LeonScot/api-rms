@@ -4,7 +4,7 @@ import { Subscription } from '../subscription/subscription.schema';
 
 export type DiscountCodeTypeDocument = HydratedDocument<DiscountCodeType>;
 
-export enum DiscountValueTypeEnum {
+export enum ValueTypeEnum {
   percentage = 'percentage',
   flat = 'flat',
   creditReceived = 'creditReceived',
@@ -25,7 +25,7 @@ export class DiscountCodeType {
   @Prop({ required: true})
   value: number;
   
-  @Prop({ required: true, enum: [DiscountValueTypeEnum.percentage, DiscountValueTypeEnum.flat, DiscountValueTypeEnum.creditReceived, DiscountValueTypeEnum.bankCredit]})
+  @Prop({ required: true, enum: [ValueTypeEnum.percentage, ValueTypeEnum.flat, ValueTypeEnum.creditReceived, ValueTypeEnum.bankCredit]})
   valueType: string;
   
   @Prop({ required: false})
