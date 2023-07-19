@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Put, Delete, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, Query, SetMetadata } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, UserRoleEnum } from './user.schema';
 import { ApiResponse, Response } from './../../core/api/api.interface';
@@ -12,6 +12,7 @@ export class UserController {
   constructor(private readonly userService: UserService, private mailService: MailService) {}
 
   @Post()
+  @SetMetadata('isPublic', true)
   async createUser(@Body(new AssignVerificationTokenPipe(), new PasswordHashPipe()) user: User): Promise<ApiResponse<User | null>> {
     try {
       await this.userService.create(user);
@@ -23,6 +24,7 @@ export class UserController {
   }
 
   @Post('verify')
+  @SetMetadata('isPublic', true)
   async userVerify(@Body() data: {token: string}): Promise<ApiResponse<string | null>> {
     try {
       

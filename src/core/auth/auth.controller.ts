@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Get, Request, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Get, Request, Req, SetMetadata } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Credential } from './credentials.interface';
 import { ApiResponse, Response } from '../api/api.interface';
@@ -11,6 +11,7 @@ export class AuthController {
   
   @HttpCode(HttpStatus.OK)
   @Post('login')
+  @SetMetadata('isPublic', true)
   async login(@Body() body: Credential): Promise<ApiResponse<string | null>> {
     const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.user);
     if (response === undefined) {
@@ -21,6 +22,7 @@ export class AuthController {
   
   @HttpCode(HttpStatus.OK)
   @Post('login/admin')
+  @SetMetadata('isPublic', true)
   async loginAdmin(@Body() body: Credential): Promise<ApiResponse<string | null>> {
     const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.admin);
     if (response === undefined) {
@@ -41,6 +43,7 @@ export class AuthController {
   }
 
   @Post('forgotpassword')
+  @SetMetadata('isPublic', true)
   async forgotpassword(@Body() body: Credential): Promise<ApiResponse<string>> {
     await this.authService.forgotpassEmail(body.email);
     
@@ -48,6 +51,7 @@ export class AuthController {
   }
 
   @Post('passwordreset')
+  @SetMetadata('isPublic', true)
   async passwordreset(@Body(new PasswordHashPipe()) body: {resetPasswordToken: string, email: string, password: string}): Promise<ApiResponse<string>> {
     const result = await this.authService.passwordreset(body);
     
