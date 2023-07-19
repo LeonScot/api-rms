@@ -6,7 +6,7 @@ import { UserModule } from './modules/users/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './core/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './core/auth/jwt.constant';
+import { jwtConstants } from './core/auth/jwt.model';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './core/auth/auth.guard';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
