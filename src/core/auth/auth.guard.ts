@@ -6,24 +6,21 @@ import {
   } from '@nestjs/common';
   import { JwtService } from '@nestjs/jwt';
   import { Request } from 'express';
-import { jwtConstants } from './jwt.constant';
+import { jwtConstants } from './jwt.model';
+import { Reflector } from '@nestjs/core';
   
   @Injectable()
   export class AuthGuard implements CanActivate {
 
-    constructor(private jwtService: JwtService) {}
+    constructor(private jwtService: JwtService, private reflector: Reflector) {}
     
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request: Request = context.switchToHttp().getRequest();
-        
-      // Get the requested route path
-      const { path } = request.route;
-
-      // Define the routes that should be excluded from authentication
-      const excludedRoutes = ['/auth/login', '/user/verify', '/auth/forgotpassword', '/auth/passwordreset'];
-
+      
+      const isPublic = this.reflector.get<boolean>('isPublic', context.getHandler());
+      
       // Check if the requested route should be excluded
-      const shouldExclude = excludedRoutes.some(route => path.includes(route));
+      const shouldExclude = isPublic === true;
 
       if (shouldExclude) {
         // Allow the route to pass without authentication

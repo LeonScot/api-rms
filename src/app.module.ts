@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './core/database/database.module';
@@ -6,7 +6,7 @@ import { UserModule } from './modules/users/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './core/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './core/auth/jwt.constant';
+import { jwtConstants } from './core/auth/jwt.model';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './core/auth/auth.guard';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
@@ -15,6 +15,7 @@ import { UserSubscriptionModule } from './modules/user-subscription/user-subscri
 import { AttachmentModule } from './modules/attachment/attachment.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CampaignModule } from './modules/campaign/campaign.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { join } from 'path';
     SubscriptionModule,
     DiscountCodeTypeModule,
     UserSubscriptionModule,
-    AttachmentModule
+    AttachmentModule,
+    CampaignModule
   ],
   controllers: [AppController],
   providers: [

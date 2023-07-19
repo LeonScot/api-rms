@@ -22,7 +22,7 @@ export class AttachmentController {
       ) files:  Array<Express.Multer.File>
     ): Promise<ApiResponse<Attachment[] | null>> {
       try {
-        const attachments = await this.attachmentService.saveFiles(files);
+        const attachments = await this.attachmentService.cloudSave(files);
         return Response.OK(attachments, 'Attachment created successfully');
       } catch (error) {
         return Response.Error(error instanceof MongoError ? error.message : 'Error creating Attachment');

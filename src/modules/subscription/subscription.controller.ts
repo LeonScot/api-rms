@@ -12,7 +12,7 @@ export class SubscriptionController {
     @Post()
     async create(@Body() subscription: Subscription): Promise<ApiResponse<Subscription | null>> {
       try {
-        await this.subscriptionService.create(subscription);
+        await this.subscriptionService.createHasFile(subscription);
         return Response.OK(subscription, 'Subscription created successfully');
       } catch (error) {
         return Response.Error(error instanceof MongoError ? error.message : 'Error creating Subscription');
@@ -23,7 +23,7 @@ export class SubscriptionController {
     async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<Subscription[] | null>> {
       
       try {
-        const subscriptions = await this.subscriptionService.findAll({pageNumber, limit});
+        const subscriptions = await this.subscriptionService.findAll({pageNumber, limit}, {field: 'createdDate', order: 'desc'});
         return Response.OK(subscriptions.data, 'Subscriptions fetched successfully', await subscriptions.totalCount);
       } catch (error) {
         return Response.Error('Error fetching Subscriptions');

@@ -1,23 +1,23 @@
-// subscription.model.ts
+// campaign.model.ts
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Subscription } from './subscription.schema';
+import { Campaign } from './campaign.schema';
 import { CrudService } from 'src/core/api/crud.service';
 import { from, lastValueFrom, of, pipe, switchMap } from 'rxjs';
 import { AttachmentService } from '../attachment/attachment.service';
 
 @Injectable()
-export class SubscriptionService extends CrudService<Subscription> {
+export class CampaignService extends CrudService<Campaign> {
 
     public query: object;
 
-    constructor(@InjectModel(Subscription.name) private readonly subscriptionModel: Model<Subscription>, private attachmentService: AttachmentService) {
-        super(subscriptionModel);
+    constructor(@InjectModel(Campaign.name) private readonly campaignModel: Model<Campaign>, private attachmentService: AttachmentService) {
+        super(campaignModel);
     }
 
-    public createHasFile(subscription: Subscription) {
-        const subscription$ = from(this.create(subscription)).pipe(
+    public createHasFile(campaign: Campaign) {
+        const campaign$ = from(this.create(campaign)).pipe(
             switchMap(async res => {
                 const attachment = await this.attachmentService.findByUrl(res.image);
                 attachment.isLinked = true;
@@ -25,6 +25,6 @@ export class SubscriptionService extends CrudService<Subscription> {
                 return res;
             })
         );
-        return lastValueFrom(subscription$);
+        return lastValueFrom(campaign$);
     }
 }
