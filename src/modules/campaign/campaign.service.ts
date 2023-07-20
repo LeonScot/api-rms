@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Campaign } from './campaign.schema';
 import { CrudService } from 'src/core/api/crud.service';
-import { from, lastValueFrom, of, pipe, switchMap } from 'rxjs';
+import { from, lastValueFrom, switchMap } from 'rxjs';
 import { AttachmentService } from '../attachment/attachment.service';
 
 @Injectable()
@@ -19,9 +19,11 @@ export class CampaignService extends CrudService<Campaign> {
     public createHasFile(campaign: Campaign) {
         const campaign$ = from(this.create(campaign)).pipe(
             switchMap(async res => {
-                const attachment = await this.attachmentService.findByUrl(res.image);
-                attachment.isLinked = true;
-                this.attachmentService.update(attachment._id, attachment);
+                if (res.image) {
+                    const attachment = await this.attachmentService.findByUrl(res.image);
+                    attachment.isLinked = true;
+                    await this.attachmentService.update(attachment._id, attachment);
+                }
                 return res;
             })
         );
