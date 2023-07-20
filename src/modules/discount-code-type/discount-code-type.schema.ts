@@ -26,7 +26,7 @@ export class DiscountCodeType {
   value: number;
   
   @Prop({ required: true, enum: [ValueTypeEnum.percentage, ValueTypeEnum.flat, ValueTypeEnum.creditReceived, ValueTypeEnum.bankCredit]})
-  valueType: string;
+  valueType: ValueTypeEnum;
   
   @Prop({ required: false})
   capAmount: number;

@@ -44,7 +44,7 @@ export class Reward {
   value: number;
   
   @Prop({ required: true, enum: [ValueTypeEnum.percentage, ValueTypeEnum.flat, ValueTypeEnum.creditReceived, ValueTypeEnum.bankCredit]})
-  valueType: string;
+  valueType: ValueTypeEnum;
   
   @Prop({ required: false})
   capAmount: number;
@@ -53,13 +53,13 @@ export class Reward {
   minAmount: number;
   
   @Prop({ required: true, enum: [RewardTypeEnum.retention, RewardTypeEnum.visit]})
-  rewardType: string;
+  rewardType: RewardTypeEnum;
 
   @Prop({ required: true})
   count: number;
 
   @Prop({ required: true, enum: [ServiceOrProduct.product, ServiceOrProduct.service]})
-  serviceOrProduct: string;
+  serviceOrProduct: ServiceOrProduct;
 
   @Prop({ required: true})
   serviceOrProductId: string;
