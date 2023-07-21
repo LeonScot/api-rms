@@ -3,7 +3,7 @@ import { AttachmentController } from './attachment.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Attachment, AttachmentSchema } from "./attachment.schema";
 import { AttachmentService } from './attachment.service';
-import FirebaseAdmin from 'src/core/firebase-admin/firebase-admin';
+import FirebaseControl from 'src/core/firebase-admin/firebase-admin';
 
 @Module({
     imports: [
@@ -14,7 +14,7 @@ import FirebaseAdmin from 'src/core/firebase-admin/firebase-admin';
       AttachmentService,
       {
         provide: 'FirebaseAdmin',
-        useValue: FirebaseAdmin, // Provide the Firebase Admin SDK instance
+        useValue: FirebaseControl, // Provide the Firebase Admin SDK instance
       },
     ],
     exports: [AttachmentService]

@@ -16,12 +16,15 @@ import { AttachmentModule } from './modules/attachment/attachment.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CampaignModule } from './modules/campaign/campaign.module';
+import configuration from './core/config/configuration';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      load: [configuration],
+      isGlobal: true,
       envFilePath: 'environments/.env',
-      isGlobal: true
+      cache: true,
     }),
     JwtModule.register({
       global: true,
