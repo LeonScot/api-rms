@@ -44,7 +44,7 @@ export class User {
   verified: boolean;
 
   @Prop({ required: true, enum: [UserRoleEnum.user, UserRoleEnum.admin, UserRoleEnum.employee], default: UserRoleEnum.user })
-  role: string;
+  role: UserRoleEnum;
   
   @Prop()
   verificationToken: string;
