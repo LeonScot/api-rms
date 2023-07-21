@@ -10,10 +10,13 @@ class FireInit {
 
     async init() {
         await ConfigModule.envVariablesLoaded;
+
+        const { privateKey } = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
+
         FirebaseAdmin.initializeApp({
             credential: FirebaseAdmin.credential.cert({
                 projectId: this.configService.get('FIREBASE_PROJECT_ID'),
-                privateKey: this.configService.get('FIREBASE_PRIVATE_KEY'),
+                privateKey: privateKey,
                 clientEmail: this.configService.get('FIREBASE_CLIENT_EMAIL'),
             }),
             storageBucket: 'beaute-diamonds-test.appspot.com'
