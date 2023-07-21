@@ -17,6 +17,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CampaignModule } from './modules/campaign/campaign.module';
 import configuration from './core/config/configuration';
+import { RewardModule } from './modules/reward/reward.module';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import configuration from './core/config/configuration';
     DiscountCodeTypeModule,
     UserSubscriptionModule,
     AttachmentModule,
-    CampaignModule
+    CampaignModule,
+    RewardModule
   ],
   controllers: [AppController],
   providers: [
