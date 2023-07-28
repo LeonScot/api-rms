@@ -41,6 +41,9 @@ export class Reward {
   endDate: Date;
 
   @Prop({ required: true})
+  durationInMonth: number;
+  
+  @Prop({ required: true})
   value: number;
   
   @Prop({ required: true, enum: [ValueTypeEnum.percentage, ValueTypeEnum.flat, ValueTypeEnum.creditReceived, ValueTypeEnum.bankCredit]})
