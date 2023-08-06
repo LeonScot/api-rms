@@ -45,6 +45,9 @@ export class ServicesOffered {
   
   @Prop({ required: false})
   availabilityEnd: number;
+  
+  @Prop({ required: true, default: true})
+  active?: boolean;
 
   @Prop({ type: Date, default: Date.now})
   createdDate?: Date;

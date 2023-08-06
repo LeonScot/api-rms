@@ -21,6 +21,17 @@ export class ServicesOfferedController {
     }
   }
 
+  @Post('sync')
+  @UseGuards(AdminGuard)
+  async syncServices(): Promise<ApiResponse<ServicesOffered[] | null>> {
+    try {
+      const services = await this.servicesOfferedService.syncServices();
+      return Response.OK(services, 'ServicesOffered created successfully');
+    } catch (error) {
+      return Response.Error(error instanceof MongoError ? error.message : 'Error creating ServicesOffered');
+    }
+  }
+
   @Get()
   async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<ServicesOffered[] | null>> {
     try {
