@@ -19,6 +19,7 @@ import { CampaignModule } from './modules/campaign/campaign.module';
 import configuration from './core/config/configuration';
 import { RewardModule } from './modules/reward/reward.module';
 import { ServicesOfferedModule } from './modules/ServicesOffered/services-offered.module';
+import { BookingModule } from './modules/Booking/booking.module';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { ServicesOfferedModule } from './modules/ServicesOffered/services-offere
     AttachmentModule,
     CampaignModule,
     RewardModule,
-    ServicesOfferedModule
+    ServicesOfferedModule,
+    BookingModule
   ],
   controllers: [AppController],
   providers: [

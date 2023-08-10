@@ -1,16 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { ValueTypeEnum } from '../discount-code-type/discount-code-type.schema';
-
-export enum ServicesOfferedTypeEnum {
-  retention = 'retention',
-  visit = 'visit'
-}
-
-export enum ServiceOrProduct {
-  service = 'service',
-  product = 'product'
-}
 
 export type ServicesOfferedDocument = HydratedDocument<ServicesOffered>;
 
