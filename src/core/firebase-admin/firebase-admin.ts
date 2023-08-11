@@ -11,7 +11,7 @@ class FireInit {
     async init() {
         await ConfigModule.envVariablesLoaded;
 
-        const { privateKey } = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
+        const { privateKey } = JSON.parse(this.configService.get('FIREBASE_PRIVATE_KEY'));
 
         FirebaseAdmin.initializeApp({
             credential: FirebaseAdmin.credential.cert({

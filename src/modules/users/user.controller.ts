@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Put, Delete, Query, SetMetadata } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, Query, SetMetadata, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, UserRoleEnum } from './user.schema';
 import { ApiResponse, Response } from './../../core/api/api.interface';
@@ -6,6 +6,7 @@ import { MongoError } from 'mongodb';
 import { AssignVerificationTokenPipe } from 'src/pipes/assign-verification-token.pipe';
 import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
 import { MailService } from 'src/core/email/mail.service';
+import { AdminGuard } from 'src/core/auth/admin.guard';
 
 @Controller('user')
 export class UserController {
@@ -44,6 +45,7 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(AdminGuard)
   async findAllUsers(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('userType') userType: UserRoleEnum): Promise<ApiResponse<User[] | null>> {
     
     try {
@@ -55,6 +57,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseGuards(AdminGuard)
   async findUserById(@Param('id') id: string): Promise<ApiResponse<User | null>> {
     try {
       const user = await this.userService.findById(id);
@@ -65,6 +68,7 @@ export class UserController {
   }
 
   @Put(':id')
+  @UseGuards(AdminGuard)
   async updateUser(@Param('id') id: string, @Body() user: User): Promise<ApiResponse<User | null>> {
     try {
       const updatedUser = await this.userService.update(id, user);
@@ -75,6 +79,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @UseGuards(AdminGuard)
   async deleteUser(@Param('id') id: string): Promise<ApiResponse<User | null>> {
     try {
       const deletedUser = await this.userService.delete(id);

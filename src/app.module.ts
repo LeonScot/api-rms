@@ -18,6 +18,8 @@ import { join } from 'path';
 import { CampaignModule } from './modules/campaign/campaign.module';
 import configuration from './core/config/configuration';
 import { RewardModule } from './modules/reward/reward.module';
+import { ServicesOfferedModule } from './modules/ServicesOffered/services-offered.module';
+import { BookingModule } from './modules/Booking/booking.module';
 
 @Module({
   imports: [
@@ -44,7 +46,9 @@ import { RewardModule } from './modules/reward/reward.module';
     UserSubscriptionModule,
     AttachmentModule,
     CampaignModule,
-    RewardModule
+    RewardModule,
+    ServicesOfferedModule,
+    BookingModule
   ],
   controllers: [AppController],
   providers: [

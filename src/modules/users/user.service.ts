@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserRoleEnum } from './user.schema';
 import { CrudService } from 'src/core/api/crud.service';
+import { IPagination } from 'src/core/api/api.interface';
 
 @Injectable()
 export class UserService extends CrudService<User> {
@@ -14,12 +15,12 @@ export class UserService extends CrudService<User> {
         super(userModel);
     }
 
-    async getClients(page?: {pageNumber: number, limit: number}) {
+    async getClients(page?: IPagination) {
         this.query = { role: UserRoleEnum.user};
         return this.findAll(page);
     }
 
-    async getAdmins(page?: {pageNumber: number, limit: number}) {
+    async getAdmins(page?: IPagination) {
         this.query = { role: UserRoleEnum.admin};
         return this.findAll(page);
     }

@@ -31,15 +31,9 @@ export class Reward {
   @Prop({ default: true})
   active: boolean;
 
-  @Prop({ default: false})
-  expired: boolean;
-
-  @Prop({ required: true, type: Date})
-  startDate: Date;
-
-  @Prop({ required: true, type: Date})
-  endDate: Date;
-
+  @Prop({ required: true})
+  durationInMonth: number;
+  
   @Prop({ required: true})
   value: number;
   
