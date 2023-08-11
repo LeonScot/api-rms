@@ -1,5 +1,6 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
+import { IPagination, ISort } from './api.interface';
 
 @Injectable()
 export abstract class CrudService<T> {
@@ -15,7 +16,7 @@ export abstract class CrudService<T> {
         return createdRec.save();
     }
 
-    async findAll(page?: { pageNumber: number; limit: number }, sort?: { field: string; order: 'asc' | 'desc' } ): Promise<{ data: T[]; totalCount: number }> {
+    async findAll(page?: IPagination, sort?: ISort ): Promise<{ data: T[]; totalCount: number }> {
         const query = this.model.find(this.query);
         
         // Apply sorting if sort options are provided
@@ -36,6 +37,8 @@ export abstract class CrudService<T> {
         
         // Count the total number of documents
         const totalCount = await this.count();
+        
+        this.query = {};
         
         return { data, totalCount };
     }
@@ -58,9 +61,5 @@ export abstract class CrudService<T> {
 
     async delete(id: string): Promise<T> {
         return this.model.findByIdAndRemove(id).exec();
-    }
-
-    public get hasQuery() {
-        return this.query ? (Object.keys(this.query).length > 0 ? true : false) : false;
     }
 }

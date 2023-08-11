@@ -23,3 +23,6 @@ export const Response = {
     };
   },
 };
+
+export interface IPagination { pageNumber: number; limit: number }
+export interface ISort { field: string; order: 'asc' | 'desc' }
