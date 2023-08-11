@@ -10,6 +10,6 @@ import { QrCodeService } from 'src/core/qr-code/qr-code.service';
       MongooseModule.forFeature([{ name: Booking.name, schema: BookingSchema }])
     ],
     controllers: [BookingController],
-    providers: [BookingService, QrCodeService]
+    providers: [BookingService, QrCodeService],
   })
 export class BookingModule {}

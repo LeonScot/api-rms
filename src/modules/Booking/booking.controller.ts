@@ -4,30 +4,24 @@ import { Booking } from './booking.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
 import { AdminGuard } from 'src/core/auth/admin.guard';
-import { BookingPayloadPipe } from 'src/pipes/booking-payload.pipe';
 import { ReqDec } from 'src/decorators/request.decorator';
-import { QrCodeService } from 'src/core/qr-code/qr-code.service';
+import { BookingPipe } from 'src/pipes/booking.pipe';
+import { UserIdPipe } from 'src/pipes/user-id.pipe';
 
 @Controller('booking')
 export class BookingController {
 
-  constructor(private bookingService: BookingService, private qrCodeService: QrCodeService) { }
+  constructor(private bookingService: BookingService) { }
 
   @Post()
-  // @UsePipes(BookingPayloadPipe)
+  @UsePipes(BookingPipe)
   async create(@ReqDec() booking: Booking | null): Promise<ApiResponse<Booking | null>> {
     try {
-      console.log('QrCodeService', await this.qrCodeService.generateQrCodeBase64({serviceId: 'ponka', userId: 'ola', stamp: Date.now()}));
-      
-      if (booking === null) {
-        throw new Error("Service already booked");
-      }
-      // await this.bookingService.create(booking);
+      if (booking === null) { throw new Error("Service already booked"); }
+      await this.bookingService.create(booking);
       return Response.OK(booking, 'Booking created successfully');
     } catch (error) {
-      console.log('error', error);
-      
-      return Response.Error(error instanceof MongoError ? error.message : 'Error creating Booking');
+      return Response.Error(error instanceof MongoError ? error.message : (error.message ? error.message : 'Error creating Booking'));
     }
   }
 
@@ -35,6 +29,26 @@ export class BookingController {
   async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<Booking[] | null>> {
     try {
       const bookings = await this.bookingService.findAll({pageNumber, limit});
+      return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
+    } catch (error) {
+      return Response.Error('Error fetching Bookings');
+    }
+  }
+
+  @Get('completed')
+  async findUserCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserIdPipe()) userId:  string): Promise<ApiResponse<Booking[] | null>> {
+    try {
+      const bookings = await this.bookingService.userCompletedServices({pageNumber, limit}, userId);
+      return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
+    } catch (error) {
+      return Response.Error('Error fetching Bookings');
+    }
+  }
+
+  @Get('incompleted')
+  async findUserInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserIdPipe()) userId:  string): Promise<ApiResponse<Booking[] | null>> {
+    try {
+      const bookings = await this.bookingService.userInCompletedServices({pageNumber, limit}, userId);
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
     } catch (error) {
       return Response.Error('Error fetching Bookings');

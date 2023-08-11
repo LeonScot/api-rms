@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, {  HydratedDocument } from 'mongoose';
+import { ServicesOffered } from '../ServicesOffered/services-offered.schema';
+import { User } from '../users/user.schema';
 
 export type BookingDocument = HydratedDocument<Booking>;
 
@@ -8,11 +10,11 @@ export class Booking {
   
   _id?: string;
 
-  @Prop({ required: true })
-  serviceId: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: ServicesOffered.name })
+  servicesoffered: ServicesOffered | string;
 
-  @Prop({ required: true })
-  userId: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
+  user: User | string;
   
   @Prop({ required: true, unique: true })
   qrCode: string;
