@@ -55,6 +55,15 @@ export class BookingController {
     }
   }
 
+  @Get('bookedservices')
+  async allInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<Booking[] | null>> {
+    try {
+      const bookings = await this.bookingService.allInCompletedServices({pageNumber, limit});
+      return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
+    } catch (error) {
+      return Response.Error('Error fetching Bookings');
+    }
+  }
     
   @Get(':id')
   async findById(@Param('id') id: string): Promise<ApiResponse<Booking | null>> {
