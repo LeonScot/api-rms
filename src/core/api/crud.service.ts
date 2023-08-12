@@ -47,8 +47,8 @@ export abstract class CrudService<T> {
         return this.model.countDocuments(this.query).exec();
     }
 
-    async findById(id: string): Promise<T> {
-        return this.model.findById(id).exec();
+    async findById(id: string) {
+        return this.model.findById(id).populate(this.refObjectNames).exec();
     }
 
     async findOneByQuery(query: object = {}) {

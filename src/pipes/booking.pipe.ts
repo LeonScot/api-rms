@@ -32,7 +32,7 @@ export class BookingPipe implements PipeTransform {
     const bookingPayload: Booking | null = isCompleted === false ? null : {
       servicesoffered: _id,
       user: decodedToken.sub,
-      qrCode: JSON.stringify({service: _id, user: decodedToken.sub, stamp: Date.now()})
+      qrCode: btoa(JSON.stringify({service: _id, user: decodedToken.sub, stamp: Date.now()}))
     };
 
     return bookingPayload;
