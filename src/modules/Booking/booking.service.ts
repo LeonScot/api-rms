@@ -34,4 +34,9 @@ export class BookingService extends CrudService<Booking> {
         this.query = {user: userId, completed: false};
         return this.findAll(page);
     }
+
+    public async allInCompletedServices(page: IPagination) {
+        this.query = {completed: false};
+        return this.findAll(page, {field: 'createdDate', order: 'desc'});
+    }
 }

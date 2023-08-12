@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ServicesOffered } from './services-offered.schema';
 import { CrudService } from 'src/core/api/crud.service';
-import { SERVICES } from 'src/core/services-sync/services';
+import { SERVICES } from 'services';
 
 @Injectable()
 export class ServicesOfferedService extends CrudService<ServicesOffered> {
