@@ -64,6 +64,19 @@ export class BookingController {
       return Response.Error('Error fetching Bookings');
     }
   }
+
+  @Post('verifybooking')
+  async verifyBooking(@Body() body: {qrCode: string}): Promise<ApiResponse<Booking | null>> {
+    try {
+      const booking = await this.bookingService.verifyBooking(body.qrCode);
+      if (booking === null) {
+        return Response.Error('Booking already completed');
+      }
+      return Response.OK(booking, 'Bookings verified successfully');
+    } catch (error) {
+      return Response.Error('Error verification in Booking');
+    }
+  }
     
   @Get(':id')
   async findById(@Param('id') id: string): Promise<ApiResponse<Booking | null>> {

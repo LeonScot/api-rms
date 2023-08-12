@@ -39,4 +39,16 @@ export class BookingService extends CrudService<Booking> {
         this.query = {completed: false};
         return this.findAll(page, {field: 'createdDate', order: 'desc'});
     }
+
+    public async verifyBooking(qrCode: string) {
+        const query = {qrCode};
+        const booking = await this.findOneByQuery(query);
+        if (booking.completed === true) {
+            return null;
+        } else {
+            booking.scanned = booking.scanned + 1;
+            await this.update(booking._id, booking);
+            return booking;
+        }
+    }
 }
