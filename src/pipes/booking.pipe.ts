@@ -28,12 +28,11 @@ export class BookingPipe implements PipeTransform {
 
     const _id = request.body['id'] as string;
     const isCompleted = await this.bookingService.isCompleted(_id, decodedToken.sub);
-    console.log('isCompleted', isCompleted);
     
     const bookingPayload: Booking | null = isCompleted === false ? null : {
       servicesoffered: _id,
       user: decodedToken.sub,
-      qrCode: await this.qrCodeService.generateQrCodeBase64({service: _id, user: decodedToken.sub, stamp: Date.now()})
+      qrCode: JSON.stringify({service: _id, user: decodedToken.sub, stamp: Date.now()})
     };
 
     return bookingPayload;
