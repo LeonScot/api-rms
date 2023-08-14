@@ -5,11 +5,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ServicesOffered } from './services-offered.schema';
 import { CrudService } from 'src/core/api/crud.service';
 import { SERVICES } from 'src/core/sync-files/services';
+import { UserRoleEnum } from '../users/user.schema';
+import { IPagination } from 'src/core/api/api.interface';
+import { BookingService } from '../Booking/booking.service';
+import { TokenPayload } from 'src/core/auth/revoked-token.schema';
 
 @Injectable()
 export class ServicesOfferedService extends CrudService<ServicesOffered> {
 
-    constructor(@InjectModel(ServicesOffered.name) private readonly servicesOfferedModel: Model<ServicesOffered>) {
+    constructor(@InjectModel(ServicesOffered.name) private readonly servicesOfferedModel: Model<ServicesOffered>, private bookingService: BookingService) {
         super(servicesOfferedModel);
     }
 
@@ -32,5 +36,14 @@ export class ServicesOfferedService extends CrudService<ServicesOffered> {
         });
 
         return sod;
+    }
+
+    public async findAllConditonal(page: IPagination, user: TokenPayload) {
+        if (user.role === UserRoleEnum.user) {
+            this.setQuery({active: true});
+            const userBookedServices = await this.bookingService.userInCompletedServices({pageNumber: 0, limit: 0}, user.sub);
+            this.setExcludedQuery({'_id': userBookedServices.data.map(d => d.servicesoffered)}) 
+        }
+        return await this.findAll(page);
     }
 }

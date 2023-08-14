@@ -37,6 +37,10 @@ export class BookingService extends CrudService<Booking> {
         this.setQuery({completed: false});
         return this.findAll(page, {field: 'createdDate', order: 'desc'});
     }
+    public async pastBookedServices(page: IPagination) {
+        this.setQuery({completed: true});
+        return this.findAll(page, {field: 'createdDate', order: 'desc'});
+    }
 
     public async verifyBooking(qrCode: string) {
         const query = {qrCode};
@@ -48,5 +52,12 @@ export class BookingService extends CrudService<Booking> {
             await this.update(booking._id, booking);
             return booking;
         }
+    }
+
+    public async markAsComplete(id: string) {
+        const booking = await this.findById(id);
+        booking.completed = true;
+        await this.update(booking._id, booking);
+        return booking;
     }
 }

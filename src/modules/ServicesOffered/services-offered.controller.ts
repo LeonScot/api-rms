@@ -39,8 +39,7 @@ export class ServicesOfferedController {
   @Get()
   async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserPipe()) user:  TokenPayload): Promise<ApiResponse<ServicesOffered[] | null>> {
     try {
-      this.servicesOfferedService.setQuery(user.role === UserRoleEnum.user ? {active: true} : {});
-      const servicesOffereds = await this.servicesOfferedService.findAll({pageNumber, limit});
+      const servicesOffereds = await this.servicesOfferedService.findAllConditonal({pageNumber, limit}, user);
       return Response.OK(servicesOffereds.data, 'ServicesOffereds fetched successfully', await servicesOffereds.totalCount);
     } catch (error) {
       return Response.Error('Error fetching ServicesOffereds');

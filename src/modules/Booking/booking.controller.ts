@@ -29,7 +29,7 @@ export class BookingController {
   @Get()
   async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<Booking[] | null>> {
     try {
-      const bookings = await this.bookingService.findAll({pageNumber, limit});
+      const bookings = await this.bookingService.findAll({pageNumber, limit}, {field: 'createdDate', order: 'desc'});
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
     } catch (error) {
       return Response.Error('Error fetching Bookings');
@@ -66,6 +66,16 @@ export class BookingController {
     }
   }
 
+  @Get('pastbookedservices')
+  async pastbookedservices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<Booking[] | null>> {
+    try {
+      const bookings = await this.bookingService.pastBookedServices({pageNumber, limit});
+      return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
+    } catch (error) {
+      return Response.Error('Error fetching Bookings');
+    }
+  }
+
   @Post('verifybooking')
   async verifyBooking(@Body() body: {qrCode: string}): Promise<ApiResponse<Booking | null>> {
     try {
@@ -76,6 +86,16 @@ export class BookingController {
       return Response.OK(booking, 'Bookings verified successfully');
     } catch (error) {
       return Response.Error('Error verification in Booking');
+    }
+  }
+
+  @Post('markascomplete')
+  async markAsComplete(@Body() body: {id: string}): Promise<ApiResponse<Booking | null>> {
+    try {
+      const booking = await this.bookingService.markAsComplete(body.id);
+      return Response.OK(booking, 'Bookings completed successfully');
+    } catch (error) {
+      return Response.Error('Error completed Booking');
     }
   }
     
