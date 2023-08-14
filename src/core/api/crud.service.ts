@@ -6,6 +6,8 @@ import { IPagination, ISort } from './api.interface';
 export abstract class CrudService<T> {
 
     private query: object = {};
+    
+    private excludedQuery: object = {};
 
     public refObjectNames: string[] = [];
 
@@ -18,6 +20,16 @@ export abstract class CrudService<T> {
 
     async findAll(page?: IPagination, sort?: ISort ): Promise<{ data: T[]; totalCount: number }> {
         const query = this.model.find(this.query);
+
+        // Exclude documents
+        if (this.excludedQuery) {
+            for (const key in this.excludedQuery) {
+                if (Object.prototype.hasOwnProperty.call(this.excludedQuery, key)) {
+                    const element = this.excludedQuery[key];
+                    query.where(key).nin(element);
+                }
+            }
+        }
         
         // Apply sorting if sort options are provided
         if (sort) {
@@ -39,6 +51,7 @@ export abstract class CrudService<T> {
         const totalCount = await this.count();
         
         this.resetQuery();
+        this.resetExcludedQuery();
         
         return { data, totalCount };
     }
@@ -69,5 +82,13 @@ export abstract class CrudService<T> {
 
     resetQuery() {
         this.query = {};
+    }
+
+    setExcludedQuery(query: object) {
+        this.excludedQuery = query;
+    }
+
+    resetExcludedQuery() {
+        this.excludedQuery = {};
     }
 }
