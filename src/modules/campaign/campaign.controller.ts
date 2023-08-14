@@ -25,12 +25,12 @@ export class CampaignController {
     @Get()
     async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<Campaign[] | null>> {
       const user: JwtPayload = request['user'];
-      this.campaignService.query = user.role === UserRoleEnum.user ?  {
+      this.campaignService.setQuery(user.role === UserRoleEnum.user ?  {
         $and: [
           { startDate: { $lte: new Date() } },
           { endDate: { $gte: new Date() } },
         ],
-      } : {};
+      } : {});
       try {
         const campaigns = await this.campaignService.findAll({pageNumber, limit});
         return Response.OK(campaigns.data, 'Campaigns fetched successfully', await campaigns.totalCount);

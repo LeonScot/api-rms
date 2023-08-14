@@ -4,7 +4,7 @@ import { TokenPayload } from 'src/core/auth/revoked-token.schema';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class UserIdPipe implements PipeTransform {
+export class UserPipe implements PipeTransform {
 
   constructor() {}
 
@@ -21,6 +21,6 @@ export class UserIdPipe implements PipeTransform {
     if (!decodedToken) {
       throw new BadRequestException('Invalid token');
     }
-    return decodedToken.sub;
+    return decodedToken;
   }
 }

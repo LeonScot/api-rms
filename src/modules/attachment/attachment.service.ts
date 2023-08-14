@@ -12,8 +12,6 @@ import * as admin from 'firebase-admin';
 @Injectable()
 export class AttachmentService extends CrudService<Attachment> {
 
-  public query: object;
-
   constructor(
     @InjectModel(Attachment.name) private readonly attachmentModel: Model<Attachment>,
     @Inject('FirebaseAdmin') private readonly firebaseAdmin: admin.app.App

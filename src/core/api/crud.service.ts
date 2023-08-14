@@ -5,7 +5,7 @@ import { IPagination, ISort } from './api.interface';
 @Injectable()
 export abstract class CrudService<T> {
 
-    public query: object = {};
+    private query: object = {};
 
     public refObjectNames: string[] = [];
 
@@ -38,7 +38,7 @@ export abstract class CrudService<T> {
         // Count the total number of documents
         const totalCount = await this.count();
         
-        this.query = {};
+        this.resetQuery();
         
         return { data, totalCount };
     }
@@ -61,5 +61,13 @@ export abstract class CrudService<T> {
 
     async delete(id: string): Promise<T> {
         return this.model.findByIdAndRemove(id).exec();
+    }
+
+    setQuery(query: object) {
+        this.query = query;
+    }
+
+    resetQuery() {
+        this.query = {};
     }
 }

@@ -4,6 +4,10 @@ import { ServicesOffered } from './services-offered.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
 import { AdminGuard } from 'src/core/auth/admin.guard';
+import { TokenPayload } from 'src/core/auth/revoked-token.schema';
+import { ReqDec } from 'src/decorators/request.decorator';
+import { UserPipe } from 'src/pipes/user-id.pipe';
+import { UserRoleEnum } from '../users/user.schema';
 
 @Controller('servicesOffered')
 export class ServicesOfferedController {
@@ -33,8 +37,9 @@ export class ServicesOfferedController {
   }
 
   @Get()
-  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<ServicesOffered[] | null>> {
+  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserPipe()) user:  TokenPayload): Promise<ApiResponse<ServicesOffered[] | null>> {
     try {
+      this.servicesOfferedService.setQuery(user.role === UserRoleEnum.user ? {active: true} : {});
       const servicesOffereds = await this.servicesOfferedService.findAll({pageNumber, limit});
       return Response.OK(servicesOffereds.data, 'ServicesOffereds fetched successfully', await servicesOffereds.totalCount);
     } catch (error) {

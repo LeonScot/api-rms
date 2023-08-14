@@ -9,8 +9,6 @@ import { SERVICES } from 'src/core/sync-files/services';
 @Injectable()
 export class ServicesOfferedService extends CrudService<ServicesOffered> {
 
-    public query: object;
-
     constructor(@InjectModel(ServicesOffered.name) private readonly servicesOfferedModel: Model<ServicesOffered>) {
         super(servicesOfferedModel);
     }

@@ -11,8 +11,6 @@ import { IPagination } from 'src/core/api/api.interface';
 @Injectable()
 export class BookingService extends CrudService<Booking> {
 
-    public query: object;
-
     public refObjectNames: string[] = [ServicesOffered.name.toLowerCase(), User.name.toLowerCase()];
 
     constructor(@InjectModel(Booking.name) private readonly bookingModel: Model<Booking>) {
@@ -26,17 +24,17 @@ export class BookingService extends CrudService<Booking> {
     }
 
     public async userCompletedServices(page: IPagination, userId: string) {
-        this.query = {user: userId, completed: true};
+        this.setQuery({user: userId, completed: true});
         return this.findAll(page);
     }
 
     public async userInCompletedServices(page: IPagination, userId: string) {
-        this.query = {user: userId, completed: false};
+        this.setQuery({user: userId, completed: false});
         return this.findAll(page);
     }
 
     public async allInCompletedServices(page: IPagination) {
-        this.query = {completed: false};
+        this.setQuery({completed: false});
         return this.findAll(page, {field: 'createdDate', order: 'desc'});
     }
 

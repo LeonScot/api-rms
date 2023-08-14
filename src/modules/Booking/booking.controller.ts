@@ -6,7 +6,8 @@ import { MongoError } from 'mongodb';
 import { AdminGuard } from 'src/core/auth/admin.guard';
 import { ReqDec } from 'src/decorators/request.decorator';
 import { BookingPipe } from 'src/pipes/booking.pipe';
-import { UserIdPipe } from 'src/pipes/user-id.pipe';
+import { UserPipe } from 'src/pipes/user-id.pipe';
+import { TokenPayload } from 'src/core/auth/revoked-token.schema';
 
 @Controller('booking')
 export class BookingController {
@@ -36,9 +37,9 @@ export class BookingController {
   }
 
   @Get('completed')
-  async findUserCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserIdPipe()) userId:  string): Promise<ApiResponse<Booking[] | null>> {
+  async findUserCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserPipe()) user:  TokenPayload): Promise<ApiResponse<Booking[] | null>> {
     try {
-      const bookings = await this.bookingService.userCompletedServices({pageNumber, limit}, userId);
+      const bookings = await this.bookingService.userCompletedServices({pageNumber, limit}, user.sub);
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
     } catch (error) {
       return Response.Error('Error fetching Bookings');
@@ -46,9 +47,9 @@ export class BookingController {
   }
 
   @Get('incompleted')
-  async findUserInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserIdPipe()) userId:  string): Promise<ApiResponse<Booking[] | null>> {
+  async findUserInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserPipe()) user:  TokenPayload): Promise<ApiResponse<Booking[] | null>> {
     try {
-      const bookings = await this.bookingService.userInCompletedServices({pageNumber, limit}, userId);
+      const bookings = await this.bookingService.userInCompletedServices({pageNumber, limit}, user.sub);
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
     } catch (error) {
       return Response.Error('Error fetching Bookings');
