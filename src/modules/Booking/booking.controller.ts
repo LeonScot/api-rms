@@ -7,6 +7,8 @@ import { AdminGuard } from 'src/core/auth/admin.guard';
 import { ReqDec } from 'src/decorators/request.decorator';
 import { BookingPipe } from 'src/pipes/booking.pipe';
 import { UserSessionInfo } from 'src/core/auth/jwt.model';
+import { Request } from 'express';
+import { UserSession } from 'src/decorators/user-session-info.decorator';
 
 @Controller('booking')
 export class BookingController {
@@ -36,9 +38,9 @@ export class BookingController {
   }
 
   @Get('completed')
-  async findUserCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<Booking[] | null>> {
+  async findUserCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @UserSession() userInfo: UserSessionInfo): Promise<ApiResponse<Booking[] | null>> {
     try {
-      const bookings = await this.bookingService.userCompletedServices({pageNumber, limit}, (request['user'] as UserSessionInfo).sub);
+      const bookings = await this.bookingService.userCompletedServices({pageNumber, limit}, userInfo.sub);
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
     } catch (error) {
       return Response.Error('Error fetching Bookings');
@@ -46,9 +48,9 @@ export class BookingController {
   }
 
   @Get('incompleted')
-  async findUserInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<Booking[] | null>> {
+  async findUserInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @UserSession() userInfo: UserSessionInfo): Promise<ApiResponse<Booking[] | null>> {
     try {
-      const bookings = await this.bookingService.userInCompletedServices({pageNumber, limit}, (request['user'] as UserSessionInfo).sub);
+      const bookings = await this.bookingService.userInCompletedServices({pageNumber, limit}, userInfo.sub);
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
     } catch (error) {
       return Response.Error('Error fetching Bookings');

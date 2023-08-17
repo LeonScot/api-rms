@@ -5,6 +5,8 @@ import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
 import { AdminGuard } from 'src/core/auth/admin.guard';
 import { UserSessionInfo } from 'src/core/auth/jwt.model';
+import { Request } from 'express';
+import { UserSession } from 'src/decorators/user-session-info.decorator';
 
 @Controller('servicesOffered')
 export class ServicesOfferedController {
@@ -34,10 +36,10 @@ export class ServicesOfferedController {
   }
 
   @Get()
-  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<ServicesOffered[] | null>> {
+  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @UserSession() userInfo: UserSessionInfo): Promise<ApiResponse<ServicesOffered[] | null>> {
     try {
-      const servicesOffereds = await this.servicesOfferedService.findAllConditonal({pageNumber, limit}, request['user'] as UserSessionInfo);
-      return Response.OK(servicesOffereds.data, 'ServicesOffereds fetched successfully', await servicesOffereds.totalCount);
+      const servicesOffereds = await this.servicesOfferedService.findAllConditonal({pageNumber, limit}, userInfo);
+      return Response.OK(servicesOffereds.data, 'ServicesOffereds fetched successfully', servicesOffereds.totalCount);
     } catch (error) {
       return Response.Error('Error fetching ServicesOffereds');
     }
