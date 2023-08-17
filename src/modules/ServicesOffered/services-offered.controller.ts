@@ -1,13 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ServicesOfferedService } from './services-offered.service';
 import { ServicesOffered } from './services-offered.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
 import { AdminGuard } from 'src/core/auth/admin.guard';
-import { TokenPayload } from 'src/core/auth/revoked-token.schema';
-import { ReqDec } from 'src/decorators/request.decorator';
-import { UserPipe } from 'src/pipes/user-id.pipe';
-import { UserRoleEnum } from '../users/user.schema';
+import { UserSessionInfo } from 'src/core/auth/jwt.model';
 
 @Controller('servicesOffered')
 export class ServicesOfferedController {
@@ -37,9 +34,9 @@ export class ServicesOfferedController {
   }
 
   @Get()
-  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserPipe()) user:  TokenPayload): Promise<ApiResponse<ServicesOffered[] | null>> {
+  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<ServicesOffered[] | null>> {
     try {
-      const servicesOffereds = await this.servicesOfferedService.findAllConditonal({pageNumber, limit}, user);
+      const servicesOffereds = await this.servicesOfferedService.findAllConditonal({pageNumber, limit}, request['user'] as UserSessionInfo);
       return Response.OK(servicesOffereds.data, 'ServicesOffereds fetched successfully', await servicesOffereds.totalCount);
     } catch (error) {
       return Response.Error('Error fetching ServicesOffereds');

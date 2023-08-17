@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards, UsePipes } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { Booking } from './booking.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
@@ -6,8 +6,7 @@ import { MongoError } from 'mongodb';
 import { AdminGuard } from 'src/core/auth/admin.guard';
 import { ReqDec } from 'src/decorators/request.decorator';
 import { BookingPipe } from 'src/pipes/booking.pipe';
-import { UserPipe } from 'src/pipes/user-id.pipe';
-import { TokenPayload } from 'src/core/auth/revoked-token.schema';
+import { UserSessionInfo } from 'src/core/auth/jwt.model';
 
 @Controller('booking')
 export class BookingController {
@@ -37,9 +36,9 @@ export class BookingController {
   }
 
   @Get('completed')
-  async findUserCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserPipe()) user:  TokenPayload): Promise<ApiResponse<Booking[] | null>> {
+  async findUserCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<Booking[] | null>> {
     try {
-      const bookings = await this.bookingService.userCompletedServices({pageNumber, limit}, user.sub);
+      const bookings = await this.bookingService.userCompletedServices({pageNumber, limit}, (request['user'] as UserSessionInfo).sub);
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
     } catch (error) {
       return Response.Error('Error fetching Bookings');
@@ -47,9 +46,9 @@ export class BookingController {
   }
 
   @Get('incompleted')
-  async findUserInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @ReqDec(new UserPipe()) user:  TokenPayload): Promise<ApiResponse<Booking[] | null>> {
+  async findUserInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<Booking[] | null>> {
     try {
-      const bookings = await this.bookingService.userInCompletedServices({pageNumber, limit}, user.sub);
+      const bookings = await this.bookingService.userInCompletedServices({pageNumber, limit}, (request['user'] as UserSessionInfo).sub);
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
     } catch (error) {
       return Response.Error('Error fetching Bookings');

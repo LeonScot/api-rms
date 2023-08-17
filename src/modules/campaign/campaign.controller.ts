@@ -4,7 +4,7 @@ import { Campaign } from './campaign.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
 import { Request } from 'express';
-import { JwtPayload } from 'src/core/auth/jwt.model';
+import { UserSessionInfo } from 'src/core/auth/jwt.model';
 import { UserRoleEnum } from '../users/user.schema';
 
 @Controller('campaign')
@@ -24,7 +24,7 @@ export class CampaignController {
 
     @Get()
     async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<Campaign[] | null>> {
-      const user: JwtPayload = request['user'];
+      const user: UserSessionInfo = request['user'];
       this.campaignService.setQuery(user.role === UserRoleEnum.user ?  {
         $and: [
           { startDate: { $lte: new Date() } },

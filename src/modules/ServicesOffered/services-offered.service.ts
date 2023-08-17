@@ -8,7 +8,7 @@ import { SERVICES } from 'src/core/sync-files/services';
 import { UserRoleEnum } from '../users/user.schema';
 import { IPagination } from 'src/core/api/api.interface';
 import { BookingService } from '../Booking/booking.service';
-import { TokenPayload } from 'src/core/auth/revoked-token.schema';
+import { UserSessionInfo } from 'src/core/auth/jwt.model';
 
 @Injectable()
 export class ServicesOfferedService extends CrudService<ServicesOffered> {
@@ -38,7 +38,7 @@ export class ServicesOfferedService extends CrudService<ServicesOffered> {
         return sod;
     }
 
-    public async findAllConditonal(page: IPagination, user: TokenPayload) {
+    public async findAllConditonal(page: IPagination, user: UserSessionInfo) {
         if (user.role === UserRoleEnum.user) {
             this.setQuery({active: true});
             const userBookedServices = await this.bookingService.userInCompletedServices({pageNumber: 0, limit: 0}, user.sub);

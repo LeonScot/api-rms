@@ -1,7 +1,7 @@
 import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { TokenPayload } from 'src/core/auth/revoked-token.schema';
+import { UserSessionInfo } from 'src/core/auth/jwt.model';
 import { QrCodeService } from 'src/core/qr-code/qr-code.service';
 import { Booking } from 'src/modules/Booking/booking.schema';
 import { BookingService } from 'src/modules/Booking/booking.service';
@@ -20,7 +20,7 @@ export class BookingPipe implements PipeTransform {
     }
 
     const token = request.headers.authorization.replace('Bearer ', '');
-    const decodedToken = this.jwtService.decode(token) as TokenPayload;
+    const decodedToken = this.jwtService.decode(token) as UserSessionInfo;
 
     if (!decodedToken) {
       throw new BadRequestException('Invalid token');

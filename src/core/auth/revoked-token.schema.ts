@@ -28,11 +28,3 @@ RevokedTokenSchema.pre<RevokedTokenDocument>('findOneAndUpdate', function (next)
   this.set({ updatedDate: new Date() });
   next();
 });
-
-export interface TokenPayload {
-  sub: string;
-  username: string;
-  role: UserRoleEnum;
-  iat?: number;
-  ext?: number;
-}

@@ -1,12 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/modules/users/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RevokedTokenService } from './revoked-token.service';
 import { v4 as uuidv4 } from 'uuid';
-import { User, UserRoleEnum } from 'src/modules/users/user.schema';
+import { UserRoleEnum } from 'src/modules/users/user.schema';
 import { MailService } from '../email/mail.service';
-import { RevokedToken, TokenPayload } from './revoked-token.schema';
+import { RevokedToken } from './revoked-token.schema';
+import { UserSessionInfo } from './jwt.model';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
         if (user && user.verified === true && this.comparePasswords(password, user.password)) {
 
             const { password, ...result } = user;
-            const payload: TokenPayload = { sub: user._id, username: user.email, role: user.role };
+            const payload: UserSessionInfo = { sub: user._id, username: user.email, role: user.role };
 
             const access_token = await this.jwtService.signAsync(payload);
             const revokedToken: RevokedToken = {token: access_token};

@@ -6,7 +6,7 @@ import {
   } from '@nestjs/common';
   import { JwtService } from '@nestjs/jwt';
   import { Request } from 'express';
-import { JwtPayload, jwtConstants } from './jwt.model';
+import { UserSessionInfo, jwtConstants } from './jwt.model';
 import { Reflector } from '@nestjs/core';
 import { UserRoleEnum } from 'src/modules/users/user.schema';
   
@@ -21,7 +21,7 @@ import { UserRoleEnum } from 'src/modules/users/user.schema';
       const token = this.extractTokenFromHeader(request);
       
       try {
-        const payload: JwtPayload = await this.jwtService.verifyAsync(
+        const payload: UserSessionInfo = await this.jwtService.verifyAsync(
           token,
           {
             secret: jwtConstants.secret
