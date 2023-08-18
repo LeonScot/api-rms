@@ -23,9 +23,14 @@ export class BookingService extends CrudService<Booking> {
         return booking ? booking.completed : null;
     }
 
-    public async userCompletedServices(page: IPagination, userId: string) {
-        this.setQuery({user: userId, completed: true});
-        return this.findAll(page);
+    public async userCompletedServices(page: IPagination | null, userId: string) {
+        const query = {user: userId, completed: true, countForRewards: true};
+        return await this.findAllDirectQuery(query, page);
+    }
+
+    public async resetCountForRewards(userId: string) {
+        const query = {user: userId, completed: true, countForRewards: true};
+        return await this.updateManyByQuery(query, {countForRewards: false});
     }
 
     public async userInCompletedServices(page: IPagination, userId: string) {
