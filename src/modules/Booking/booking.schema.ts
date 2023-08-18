@@ -28,6 +28,9 @@ export class Booking {
   @Prop({ required: true, default: true})
   active?: boolean;
 
+  @Prop({ required: true, default: true})
+  countForRewards?: boolean;
+
   @Prop({ type: Date, default: Date.now})
   createdDate?: Date;
   
