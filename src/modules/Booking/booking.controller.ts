@@ -117,8 +117,6 @@ export class BookingController {
       const updatedBooking = await this.bookingService.update(id, booking);
       return Response.OK(updatedBooking, 'Booking updated successfully');
     } catch (error) {
-      console.log(error);
-      
       return Response.Error('Error updating booking');
     }
   }

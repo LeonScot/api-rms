@@ -58,8 +58,6 @@ export class UserSubscriptionController {
       const userSubscription = await this.userSubscriptionService.findOneByQuery(query);
       return Response.OK(userSubscription, 'UserSubscription fetched successfully');
     } catch (error) {
-      console.log(error);
-      
       return Response.Error('Error fetching userSubscription');
     }
   }

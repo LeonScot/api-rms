@@ -63,8 +63,6 @@ export class ServicesOfferedController {
       const updatedServicesOffered = await this.servicesOfferedService.update(id, servicesOffered);
       return Response.OK(updatedServicesOffered, 'ServicesOffered updated successfully');
     } catch (error) {
-      console.log(error);
-      
       return Response.Error('Error updating servicesOffered');
     }
   }

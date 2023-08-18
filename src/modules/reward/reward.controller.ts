@@ -3,6 +3,8 @@ import { RewardService } from './reward.service';
 import { Reward } from './reward.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
+import { UserSession } from 'src/decorators/user-session-info.decorator';
+import { UserSessionInfo } from 'src/core/auth/jwt.model';
 
 @Controller('reward')
 export class RewardController {
@@ -29,6 +31,16 @@ export class RewardController {
     }
   }
 
+  @Get('visitrewards')
+  async visitRewards(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @UserSession() userInfo: UserSessionInfo): Promise<ApiResponse<Reward[] | null>> {
+    try {
+      const rewards = await this.rewardService.findAllVisitRewards({pageNumber, limit}, userInfo.role);
+      return Response.OK(rewards.data, 'Rewards fetched successfully', await rewards.totalCount);
+    } catch (error) {
+      return Response.Error('Error fetching Rewards');
+    }
+  }
+
     
   @Get(':id')
   async findById(@Param('id') id: string): Promise<ApiResponse<Reward | null>> {
@@ -46,8 +58,6 @@ export class RewardController {
       const updatedReward = await this.rewardService.update(id, reward);
       return Response.OK(updatedReward, 'Reward updated successfully');
     } catch (error) {
-      console.log(error);
-      
       return Response.Error('Error updating reward');
     }
   }

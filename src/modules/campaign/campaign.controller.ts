@@ -56,8 +56,6 @@ export class CampaignController {
       const updatedCampaign = await this.campaignService.update(id, campaign);
       return Response.OK(updatedCampaign, 'Campaign updated successfully');
     } catch (error) {
-      console.log(error);
-      
       return Response.Error('Error updating campaign');
     }
   }
