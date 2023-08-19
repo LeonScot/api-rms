@@ -10,8 +10,6 @@ import { AttachmentService } from '../attachment/attachment.service';
 @Injectable()
 export class CampaignService extends CrudService<Campaign> {
 
-    public query: object;
-
     constructor(@InjectModel(Campaign.name) private readonly campaignModel: Model<Campaign>, private attachmentService: AttachmentService) {
         super(campaignModel);
     }

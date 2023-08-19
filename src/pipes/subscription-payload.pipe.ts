@@ -1,7 +1,7 @@
 import { Injectable, PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { TokenPayload } from 'src/core/auth/revoked-token.schema';
+import { UserSessionInfo } from 'src/core/auth/jwt.model';
 import { addMonthsToDate } from 'src/helpers/helpers';
 import { SubscriptionService } from 'src/modules/subscription/subscription.service';
 import { UserSubscription } from 'src/modules/user-subscription/user-subscription.schema';
@@ -18,7 +18,7 @@ export class SubscriptionPayloadPipe implements PipeTransform<any> {
     }
 
     const token = request.headers.authorization.replace('Bearer ', '');
-    const decodedToken = this.jwtService.decode(token) as TokenPayload;
+    const decodedToken = this.jwtService.decode(token) as UserSessionInfo;
 
     if (!decodedToken) {
       throw new BadRequestException('Invalid token');

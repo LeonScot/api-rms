@@ -11,8 +11,6 @@ import { IPagination } from 'src/core/api/api.interface';
 @Injectable()
 export class BookingService extends CrudService<Booking> {
 
-    public query: object;
-
     public refObjectNames: string[] = [ServicesOffered.name.toLowerCase(), User.name.toLowerCase()];
 
     constructor(@InjectModel(Booking.name) private readonly bookingModel: Model<Booking>) {
@@ -25,18 +23,27 @@ export class BookingService extends CrudService<Booking> {
         return booking ? booking.completed : null;
     }
 
-    public async userCompletedServices(page: IPagination, userId: string) {
-        this.query = {user: userId, completed: true};
-        return this.findAll(page);
+    public async userCompletedServices(page: IPagination | null, userId: string) {
+        const query = {user: userId, completed: true, countForRewards: true};
+        return await this.findAllDirectQuery(query, page);
+    }
+
+    public async resetCountForRewards(userId: string) {
+        const query = {user: userId, completed: true, countForRewards: true};
+        return await this.updateManyByQuery(query, {countForRewards: false});
     }
 
     public async userInCompletedServices(page: IPagination, userId: string) {
-        this.query = {user: userId, completed: false};
+        this.setQuery({user: userId, completed: false});
         return this.findAll(page);
     }
 
     public async allInCompletedServices(page: IPagination) {
-        this.query = {completed: false};
+        this.setQuery({completed: false});
+        return this.findAll(page, {field: 'createdDate', order: 'desc'});
+    }
+    public async pastBookedServices(page: IPagination) {
+        this.setQuery({completed: true});
         return this.findAll(page, {field: 'createdDate', order: 'desc'});
     }
 
@@ -50,5 +57,12 @@ export class BookingService extends CrudService<Booking> {
             await this.update(booking._id, booking);
             return booking;
         }
+    }
+
+    public async markAsComplete(id: string) {
+        const booking = await this.findById(id);
+        booking.completed = true;
+        await this.update(booking._id, booking);
+        return booking;
     }
 }

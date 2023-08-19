@@ -32,7 +32,7 @@ export class UserSubscriptionController {
   async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('query') query: object = {}): Promise<ApiResponse<UserSubscription[] | null>> {
     
     try {
-      this.userSubscriptionService.query = query;
+      this.userSubscriptionService.setQuery(query);
       const userSubscriptions = await this.userSubscriptionService.findAll({pageNumber, limit}, {field: 'createdDate', order: 'desc'});
       return Response.OK(userSubscriptions.data, 'UserSubscriptions fetched successfully', userSubscriptions.totalCount);
     } catch (error) {
@@ -58,8 +58,6 @@ export class UserSubscriptionController {
       const userSubscription = await this.userSubscriptionService.findOneByQuery(query);
       return Response.OK(userSubscription, 'UserSubscription fetched successfully');
     } catch (error) {
-      console.log(error);
-      
       return Response.Error('Error fetching userSubscription');
     }
   }

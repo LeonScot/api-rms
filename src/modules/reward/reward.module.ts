@@ -11,6 +11,7 @@ import { AttachmentModule } from '../attachment/attachment.module';
       AttachmentModule
     ],
     controllers: [RewardController],
-    providers: [RewardService]
+    providers: [RewardService],
+    exports: [RewardService]
   })
 export class RewardModule {}

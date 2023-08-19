@@ -9,19 +9,22 @@ import { IPagination } from 'src/core/api/api.interface';
 @Injectable()
 export class UserService extends CrudService<User> {
 
-    public query: object;
-
     constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {
         super(userModel);
     }
 
     async getClients(page?: IPagination) {
-        this.query = { role: UserRoleEnum.user};
+        this.setQuery({ role: UserRoleEnum.user});
+        return this.findAll(page);
+    }
+
+    async getAllActiveClients(page?: IPagination) {
+        this.setQuery({ role: UserRoleEnum.user, active: true });
         return this.findAll(page);
     }
 
     async getAdmins(page?: IPagination) {
-        this.query = { role: UserRoleEnum.admin};
+        this.setQuery({ role: UserRoleEnum.admin});
         return this.findAll(page);
     }
     

@@ -20,6 +20,7 @@ import configuration from './core/config/configuration';
 import { RewardModule } from './modules/reward/reward.module';
 import { ServicesOfferedModule } from './modules/ServicesOffered/services-offered.module';
 import { BookingModule } from './modules/Booking/booking.module';
+import { UserRewardModule } from './modules/RewardFacility/user-reward.module';
 
 @Module({
   imports: [
@@ -48,7 +49,8 @@ import { BookingModule } from './modules/Booking/booking.module';
     CampaignModule,
     RewardModule,
     ServicesOfferedModule,
-    BookingModule
+    BookingModule,
+    UserRewardModule
   ],
   controllers: [AppController],
   providers: [

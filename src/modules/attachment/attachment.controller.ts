@@ -57,8 +57,6 @@ export class AttachmentController {
       const updatedAttachment = await this.attachmentService.update(id, attachment);
       return Response.OK(updatedAttachment, 'Attachment updated successfully');
     } catch (error) {
-      console.log(error);
-      
       return Response.Error('Error updating attachment');
     }
   }

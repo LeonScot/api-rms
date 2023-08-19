@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, SchemaTypes } from 'mongoose';
+import { UserRoleEnum } from 'src/modules/users/user.schema';
 
 export type RevokedTokenDocument = HydratedDocument<RevokedToken>;
 
@@ -27,11 +28,3 @@ RevokedTokenSchema.pre<RevokedTokenDocument>('findOneAndUpdate', function (next)
   this.set({ updatedDate: new Date() });
   next();
 });
-
-export interface TokenPayload {
-  sub: string;
-  username: string;
-  role: string;
-  iat?: number;
-  ext?: number;
-}

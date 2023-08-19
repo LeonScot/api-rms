@@ -11,5 +11,6 @@ import { QrCodeService } from 'src/core/qr-code/qr-code.service';
     ],
     controllers: [BookingController],
     providers: [BookingService, QrCodeService],
+    exports: [BookingService]
   })
 export class BookingModule {}

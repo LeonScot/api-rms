@@ -4,11 +4,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ServicesOffered, ServicesOfferedSchema } from "./services-offered.schema";
 import { ServicesOfferedService } from './services-offered.service';
 import { AttachmentModule } from '../attachment/attachment.module';
+import { BookingModule } from '../Booking/booking.module';
 
 @Module({
     imports: [
       MongooseModule.forFeature([{ name: ServicesOffered.name, schema: ServicesOfferedSchema }]),
-      AttachmentModule
+      AttachmentModule,
+      BookingModule
     ],
     controllers: [ServicesOfferedController],
     providers: [ServicesOfferedService]

@@ -10,8 +10,6 @@ import { AttachmentService } from '../attachment/attachment.service';
 @Injectable()
 export class SubscriptionService extends CrudService<Subscription> {
 
-    public query: object;
-
     constructor(@InjectModel(Subscription.name) private readonly subscriptionModel: Model<Subscription>, private attachmentService: AttachmentService) {
         super(subscriptionModel);
     }
