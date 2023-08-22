@@ -10,6 +10,10 @@ export interface EnvironmentVariables {
     MAIL_HOST: string,
     MAIL_USER: string,
     MAIL_PASSWORD: string,
+
+    TWILIO_ACCOUNT_SID: string,
+    TWILIO_AUTH_TOKEN: string,
+    TWILIO_PHONE_NUMBER: string,
 }
 
 
@@ -25,4 +29,8 @@ export default () => ({
     MAIL_HOST: process.env.MAIL_HOST,
     MAIL_USER: process.env.MAIL_USER,
     MAIL_PASSWORD: process.env.MAIL_PASSWORD,
+
+    TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
+    TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
+    TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER,
 });
