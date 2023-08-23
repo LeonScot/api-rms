@@ -12,10 +12,21 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @SetMetadata('isPublic', true)
-  async login(@Body() body: Credential): Promise<ApiResponse<string | null>> {
-    const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.user);
-    if (response === undefined) {
+  async login(@Body() body: Credential): Promise<ApiResponse<boolean | null>> {
+    const response = await this.authService.validateUserAndSendSmsCode(body.email, body.password, UserRoleEnum.user);
+    if (response === false) {
       return Response.Error("Log in failed");
+    }
+    return Response.OK(response, "Sms Code has been sent to your phone number..");
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('login/smsverification')
+  @SetMetadata('isPublic', true)
+  async smsVerification(@Body() body: Credential): Promise<ApiResponse<string | undefined>> {
+    const response = await this.authService.validateUser(body.email, body.password, body.smsCode, UserRoleEnum.user);
+    if (response === undefined) {
+      return Response.Error("Code invalid");
     }
     return Response.OK(response, "Logged In");
   }
@@ -24,7 +35,7 @@ export class AuthController {
   @Post('login/admin')
   @SetMetadata('isPublic', true)
   async loginAdmin(@Body() body: Credential): Promise<ApiResponse<string | null>> {
-    const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.admin);
+    const response = await this.authService.validateAdmin(body.email, body.password, UserRoleEnum.admin);
     if (response === undefined) {
       return Response.Error("Log in failed");
     }

@@ -10,7 +10,7 @@ export class SmsService {
     this.twilioClient = Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
   }
 
-  async sendSms(to: string, body: string): Promise<void> {
+  async sendSms(to: string, body: string): Promise<boolean> {
     try {
       // Use the Twilio client to send an SMS message
       await this.twilioClient.messages.create({
@@ -18,9 +18,11 @@ export class SmsService {
         to,
         from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
       });
+      return true;
     } catch (error) {
       // Handle error here
       console.error('Error sending SMS:', error);
+      return false;
     }
   }
 }

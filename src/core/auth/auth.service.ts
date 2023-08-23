@@ -8,12 +8,46 @@ import { UserRoleEnum } from 'src/modules/users/user.schema';
 import { MailService } from '../email/mail.service';
 import { RevokedToken } from './revoked-token.schema';
 import { UserSessionInfo } from './jwt.model';
+import { SmsCodeService } from './sms-code.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UserService, private jwtService: JwtService, private revokedTokenService: RevokedTokenService, private mailService: MailService) {}
+    constructor(
+        private userService: UserService,
+        private jwtService: JwtService,
+        private revokedTokenService: RevokedTokenService,
+        private mailService: MailService,
+        private smsCodeService: SmsCodeService
+    ) {}
 
-    async validateUser(email: string, password: string, role: UserRoleEnum): Promise<string | null> {
+    async validateUserAndSendSmsCode(email: string, password: string, role: UserRoleEnum): Promise<boolean> {
+        const user = await this.userService.findByEmailnRole(email, role);
+        if (user && user.verified === true && this.comparePasswords(password, user.password)) {
+            return await this.smsCodeService.sendVerificationCode(user.phoneNumber, user._id);;
+        }
+        // throw new UnauthorizedException();
+        return false;
+    }
+
+    async validateUser(email: string, password: string, smsCode: string, role: UserRoleEnum): Promise<string | undefined> {
+        const user = await this.userService.findByEmailnRole(email, role);
+        const smsCodeRec = await this.smsCodeService.findByUserIdAndCode(user._id, smsCode);
+        if (smsCodeRec && smsCodeRec.code === smsCode.trim() && user && user.verified === true && this.comparePasswords(password, user.password)) {
+            await this.smsCodeService.markAsVerified(smsCodeRec);
+            const { password, ...result } = user;
+            const payload: UserSessionInfo = { sub: user._id, username: user.email, role: user.role };
+
+            const access_token = await this.jwtService.signAsync(payload);
+            const revokedToken: RevokedToken = {token: access_token};
+            this.revokedTokenService.create(revokedToken);
+            return access_token;
+        }
+        // throw new UnauthorizedException();
+
+        return undefined;
+    }
+
+    async validateAdmin(email: string, password: string, role: UserRoleEnum): Promise<string | undefined> {
         const user = await this.userService.findByEmailnRole(email, role);
         if (user && user.verified === true && this.comparePasswords(password, user.password)) {
 
