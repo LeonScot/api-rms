@@ -31,9 +31,9 @@ export class AuthService {
 
     async validateUser(email: string, password: string, smsCode: string, role: UserRoleEnum): Promise<string | undefined> {
         const user = await this.userService.findByEmailnRole(email, role);
-        const smsCodeRec = await this.smsCodeService.findByUserIdAndCode(user._id, smsCode);
-        if (smsCodeRec && smsCodeRec.code === smsCode.trim() && user && user.verified === true && this.comparePasswords(password, user.password)) {
-            await this.smsCodeService.markAsVerified(smsCodeRec);
+        const codeVerification = await this.smsCodeService.checkCodeVerification(user._id, smsCode);
+        if (user && codeVerification === true && user.verified === true && this.comparePasswords(password, user.password)) {
+            
             const { password, ...result } = user;
             const payload: UserSessionInfo = { sub: user._id, username: user.email, role: user.role };
 

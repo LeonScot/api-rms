@@ -40,4 +40,20 @@ export class SmsCodeService extends CrudService<SmsCode> {
     smsCode.verified = true;
     return await this.update(smsCode._id, smsCode);
   }
+
+  public async checkCodeVerification(userId: string, smsCode: string) {
+    const smsCodeRec = await this.findByUserIdAndCode(userId, smsCode);
+    const notExpired = this.isWithin120Seconds(smsCodeRec.createdDate);
+    await this.markAsVerified(smsCodeRec);
+    return smsCodeRec && smsCodeRec.code === smsCode.trim() && notExpired;
+  }
+
+  private isWithin120Seconds(datetime: Date) {
+    const currentTime = new Date();
+    const inputTime = new Date(datetime);
+  
+    const timeDifferenceInSeconds = (currentTime.valueOf() - inputTime.valueOf()) / 1000;
+  
+    return timeDifferenceInSeconds <= 120;
+  }
 }

@@ -15,7 +15,7 @@ export class AuthController {
   async login(@Body() body: Credential): Promise<ApiResponse<boolean | null>> {
     const response = await this.authService.validateUserAndSendSmsCode(body.email, body.password, UserRoleEnum.user);
     if (response === false) {
-      return Response.Error("Log in failed");
+      return Response.Error("Credentials did not match..");
     }
     return Response.OK(response, "Sms Code has been sent to your phone number..");
   }
