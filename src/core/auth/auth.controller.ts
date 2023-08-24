@@ -26,7 +26,7 @@ export class AuthController {
   async smsVerification(@Body() body: Credential): Promise<ApiResponse<string | undefined>> {
     const response = await this.authService.validateUser(body.email, body.password, body.smsCode, UserRoleEnum.user);
     if (response === undefined) {
-      return Response.Error("Code invalid");
+      return Response.Error("Code Invalid or Expired");
     }
     return Response.OK(response, "Logged In");
   }

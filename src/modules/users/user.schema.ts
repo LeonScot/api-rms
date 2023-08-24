@@ -26,6 +26,9 @@ export class User {
   @Prop({ required: true })
   phoneNumber: string;
 
+  @Prop({ required: true, default: false })
+  phoneNumberVerified: boolean;
+
   @Prop({ required: true })
   gender: string;
 

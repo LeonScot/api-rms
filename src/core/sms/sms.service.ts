@@ -25,4 +25,18 @@ export class SmsService {
       return false;
     }
   }
+
+  async sendVerificationCode(phoneNumber: string): Promise<void> {
+    await this.twilioClient.verify._v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
+      .verifications
+      .create({ to: phoneNumber, channel: 'sms' });
+  }
+
+  async verifyCode(phoneNumber: string, code: string): Promise<boolean> {
+    const verification = await this.twilioClient.verify._v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
+      .verificationChecks
+      .create({ to: phoneNumber, code });
+
+    return verification.status === 'approved';
+  }
 }
