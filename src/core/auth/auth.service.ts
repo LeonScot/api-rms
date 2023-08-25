@@ -8,7 +8,7 @@ import { UserRoleEnum } from 'src/modules/users/user.schema';
 import { MailService } from '../email/mail.service';
 import { RevokedToken } from './revoked-token.schema';
 import { UserSessionInfo } from './jwt.model';
-import { SmsCodeService } from './sms-code.service';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class AuthService {
@@ -17,13 +17,13 @@ export class AuthService {
         private jwtService: JwtService,
         private revokedTokenService: RevokedTokenService,
         private mailService: MailService,
-        private smsCodeService: SmsCodeService
+        private smsService: SmsService,
     ) {}
 
     async validateUserAndSendSmsCode(email: string, password: string, role: UserRoleEnum): Promise<boolean> {
         const user = await this.userService.findByEmailnRole(email, role);
         if (user && user.verified === true && this.comparePasswords(password, user.password)) {
-            return await this.smsCodeService.sendVerificationCode(user.phoneNumber, user._id);;
+            return await this.smsService.sendVerificationCode(user.phoneNumber);;
         }
         // throw new UnauthorizedException();
         return false;
@@ -31,7 +31,7 @@ export class AuthService {
 
     async validateUser(email: string, password: string, smsCode: string, role: UserRoleEnum): Promise<string | undefined> {
         const user = await this.userService.findByEmailnRole(email, role);
-        const codeVerification = await this.smsCodeService.checkCodeVerification(user._id, smsCode);
+        const codeVerification = await this.smsService.verifyCode(user.phoneNumber, smsCode);
         if (user && codeVerification === true && user.verified === true && this.comparePasswords(password, user.password)) {
             
             const { password, ...result } = user;
@@ -106,7 +106,6 @@ export class AuthService {
     }
 
     async isPhoneNumberUnique(phoneNumber: string) {
-        const unique = await this.userService.isPhoneNumberUnique(phoneNumber);
-        return unique === true && (await this.smsCodeService.sendPhoneNumberVerificationCode(phoneNumber)) === true;
+        return await this.userService.isPhoneNumberUnique(phoneNumber);
     }
 }
