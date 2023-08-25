@@ -104,4 +104,9 @@ export class AuthService {
         }
 
     }
+
+    async isPhoneNumberUnique(phoneNumber: string) {
+        const unique = await this.userService.isPhoneNumberUnique(phoneNumber);
+        return unique === true && (await this.smsCodeService.sendPhoneNumberVerificationCode(phoneNumber)) === true;
+    }
 }

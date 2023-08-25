@@ -24,8 +24,8 @@ export class SmsCodeService extends CrudService<SmsCode> {
 
     // Send the verification code via SMS
     const message = `Your RMS login verification code is: ${verificationCode}`;
-    // const success = await this.smsService.sendSms(phoneNumber, message);
-    const success = true;
+    const success = await this.smsService.sendSms(phoneNumber, message);
+    // const success = true;
 
     return success;
   }
@@ -44,7 +44,7 @@ export class SmsCodeService extends CrudService<SmsCode> {
   public async checkCodeVerification(userId: string, smsCode: string) {
     const smsCodeRec = await this.findByUserIdAndCode(userId, smsCode);
     const notExpired = this.isWithin120Seconds(smsCodeRec.createdDate);
-    await this.markAsVerified(smsCodeRec);
+    await this.markAsVerified(smsCodeRec); 
     return smsCodeRec && smsCodeRec.code === smsCode.trim() && notExpired;
   }
 
@@ -55,5 +55,9 @@ export class SmsCodeService extends CrudService<SmsCode> {
     const timeDifferenceInSeconds = (currentTime.valueOf() - inputTime.valueOf()) / 1000;
   
     return timeDifferenceInSeconds <= 120;
+  }
+
+  async sendPhoneNumberVerificationCode(phoneNumber: string) {
+    return await this.smsService.sendVerificationCode(phoneNumber);
   }
 }

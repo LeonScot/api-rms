@@ -26,17 +26,28 @@ export class SmsService {
     }
   }
 
-  async sendVerificationCode(phoneNumber: string): Promise<void> {
-    await this.twilioClient.verify._v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
+  async sendVerificationCode(phoneNumber: string): Promise<boolean> {
+    const validPhoneNumber = await this.twilioClient.lookups.v2.phoneNumbers(phoneNumber).fetch().then(res => res.valid).catch( _ => false );
+    if (!validPhoneNumber) {
+      return false;
+    }
+    const sent = await this.twilioClient.verify.v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
       .verifications
-      .create({ to: phoneNumber, channel: 'sms' });
+      .create({ to: phoneNumber, channel: 'sms' })
+      .then(verification => true)
+      .catch(error => {
+        console.error(error);
+        return false
+      });
+      
+    return sent;
   }
 
   async verifyCode(phoneNumber: string, code: string): Promise<boolean> {
-    const verification = await this.twilioClient.verify._v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
-      .verificationChecks
-      .create({ to: phoneNumber, code });
-
+    const verification = await this.twilioClient.verify.v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
+    .verificationChecks
+    .create({ to: phoneNumber, code });
+    
     return verification.status === 'approved';
   }
 }

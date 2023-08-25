@@ -1,9 +1,9 @@
-import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Get, Request, Req, SetMetadata } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Get, Request, Req, SetMetadata, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Credential } from './credentials.interface';
 import { ApiResponse, Response } from '../api/api.interface';
 import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
-import { UserRoleEnum } from 'src/modules/users/user.schema';
+import { User, UserRoleEnum } from 'src/modules/users/user.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -29,6 +29,17 @@ export class AuthController {
       return Response.Error("Code Invalid or Expired");
     }
     return Response.OK(response, "Logged In");
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('sendphonenumberverificationcode')
+  @SetMetadata('isPublic', true)
+  async sendPhoneNumberVerificationCode(@Body() body: User): Promise<ApiResponse<boolean | undefined>> {
+    const response = await this.authService.isPhoneNumberUnique(body.phoneNumber);
+    if (response === false) {
+      return Response.Error("Phone number verification falied");
+    }
+    return Response.OK(response, "Phone number verification, we are sending you code, please verify");
   }
   
   @HttpCode(HttpStatus.OK)

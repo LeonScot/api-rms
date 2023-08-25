@@ -39,4 +39,10 @@ export class UserService extends CrudService<User> {
     async findByVerificationCode(verificationToken: string): Promise<User> {
         return this.userModel.findOne({ verificationToken }).exec();
     }
+
+    async isPhoneNumberUnique(phoneNumber: string) {
+        const query = {phoneNumber};
+        const user = await this.findOneByQuery(query);
+        return user && user.phoneNumber === phoneNumber ? false : true;
+    }
 }

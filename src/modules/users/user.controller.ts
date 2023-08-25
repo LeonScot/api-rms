@@ -7,15 +7,22 @@ import { AssignVerificationTokenPipe } from 'src/pipes/assign-verification-token
 import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
 import { MailService } from 'src/core/email/mail.service';
 import { AdminGuard } from 'src/core/auth/admin.guard';
+import { SmsService } from 'src/core/sms/sms.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService, private mailService: MailService) {}
+  constructor(private readonly userService: UserService, private mailService: MailService, private smsService: SmsService) {}
 
   @Post()
   @SetMetadata('isPublic', true)
-  async createUser(@Body(new AssignVerificationTokenPipe(), new PasswordHashPipe()) user: User): Promise<ApiResponse<User | null>> {
+  async createUser(@Body(new AssignVerificationTokenPipe(), new PasswordHashPipe()) user: User, @Query('code') code: string): Promise<ApiResponse<User | null>> {
     try {
+      if (user.role === UserRoleEnum.user) {
+        const verified = await this.smsService.verifyCode(user.phoneNumber, code);
+        if (verified === false) {
+          return Response.Error("Incorrect code phone number verification failed");
+        }
+      }
       await this.userService.create(user);
       await this.mailService.sendUserConfirmation(user);
       return Response.OK(user, 'User created successfully');
