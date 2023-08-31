@@ -54,6 +54,9 @@ export class User {
   
   @Prop({ default: true })
   active: boolean;
+  
+  @Prop({ default: true })
+  twoFA: boolean;
 
   @Prop({ type: Date, default: Date.now})
   createdDate: Date;

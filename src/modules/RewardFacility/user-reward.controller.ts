@@ -3,8 +3,6 @@ import { UserRewardService } from './user-reward.service';
 import { UserReward } from './user-reward.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
-import { UserSession } from 'src/decorators/user-session-info.decorator';
-import { UserSessionInfo } from 'src/core/auth/jwt.model';
 
 @Controller('userReward')
 export class UserRewardController {

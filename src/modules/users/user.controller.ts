@@ -8,6 +8,8 @@ import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
 import { MailService } from 'src/core/email/mail.service';
 import { AdminGuard } from 'src/core/auth/admin.guard';
 import { SmsService } from 'src/core/sms/sms.service';
+import { UserSessionDecorator } from 'src/decorators/user-session-info.decorator';
+import { UserSessionInfo } from 'src/core/auth/jwt.model';
 
 @Controller('user')
 export class UserController {
@@ -74,6 +76,16 @@ export class UserController {
     }
   }
 
+  @Get('settings/myprofile')
+  async getMyProfile(@UserSessionDecorator() userInfo: UserSessionInfo): Promise<ApiResponse<User | null>> {
+    try {
+      const user = await this.userService.findById(userInfo.sub);
+      return Response.OK(user, 'User profile fetched successfully');
+    } catch (error) {
+      return Response.Error('Error fetching user profile');
+    }
+  }
+
   @Put(':id')
   @UseGuards(AdminGuard)
   async updateUser(@Param('id') id: string, @Body() user: User): Promise<ApiResponse<User | null>> {
@@ -93,6 +105,28 @@ export class UserController {
       return Response.OK(deletedUser, 'User deleted successfully');
     } catch (error) {
       return Response.Error('Error deleting user');
+    }
+  }
+
+  @Post('2faenable')
+  async twoFAEnable(@UserSessionDecorator() userInfo: UserSessionInfo) {
+    try {
+      if (userInfo.role !== UserRoleEnum.user) { return; }
+      await this.userService.twoFaEnable(userInfo.sub);
+      return Response.OK(null, '2FA Enabled successfully');
+    } catch (error) {
+      return Response.Error('Enabling 2FA failed');
+    }
+  }
+
+  @Post('2fadisable')
+  async twoFADisable(@UserSessionDecorator() userInfo: UserSessionInfo) {
+    try {
+      if (userInfo.role !== UserRoleEnum.user) { return; }
+      await this.userService.twoFaDisable(userInfo.sub);
+      return Response.OK(null, '2FA Disabled successfully');
+    } catch (error) {
+      return Response.Error('Disabling 2FA failed');
     }
   }
 }

@@ -12,19 +12,19 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @SetMetadata('isPublic', true)
-  async login(@Body() body: Credential): Promise<ApiResponse<boolean | null>> {
+  async login(@Body() body: Credential): Promise<ApiResponse<boolean | string | null | undefined>> {
     const response = await this.authService.validateUserAndSendSmsCode(body.email, body.password, UserRoleEnum.user);
-    if (response === false) {
+    if (response === false || response === undefined) {
       return Response.Error("Credentials did not match..");
     }
-    return Response.OK(response, "Sms Code has been sent to your phone number..");
+    return Response.OK(response, typeof response === 'string' ? "Logged In" : "Sms Code has been sent to your phone number..");
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('login/smsverification')
   @SetMetadata('isPublic', true)
   async smsVerification(@Body() body: Credential): Promise<ApiResponse<string | undefined>> {
-    const response = await this.authService.validateUser(body.email, body.password, body.smsCode, UserRoleEnum.user);
+    const response = await this.authService.validateUserAndSmsCode(body.email, body.password, body.smsCode, UserRoleEnum.user);
     if (response === undefined) {
       return Response.Error("Code Invalid or Expired");
     }
