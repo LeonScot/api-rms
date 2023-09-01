@@ -12,6 +12,7 @@ export class UserRewardController {
   @Post()
   async create(@Body() userReward: UserReward): Promise<ApiResponse<UserReward | null>> {
     try {
+      await this.userRewardService.create(userReward);
       return Response.OK(userReward, 'UserReward created successfully');
     } catch (error) {
       return Response.Error(error instanceof MongoError ? error.message : 'Error creating UserReward');
@@ -21,7 +22,7 @@ export class UserRewardController {
   @Get()
   async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<UserReward[] | null>> {
     try {
-      const userRewards = await this.userRewardService.findAll({pageNumber, limit});
+      const userRewards = await this.userRewardService.findAll({pageNumber, limit}, {field: 'createdDate', order: 'desc'});
       return Response.OK(userRewards.data, 'UserRewards fetched successfully', await userRewards.totalCount);
     } catch (error) {
       return Response.Error('Error fetching UserRewards');
