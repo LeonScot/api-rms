@@ -23,7 +23,7 @@ export class User {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true   })
   phoneNumber: string;
 
   @Prop({ required: true })
@@ -46,14 +46,17 @@ export class User {
   @Prop({ required: true, enum: [UserRoleEnum.user, UserRoleEnum.admin, UserRoleEnum.employee], default: UserRoleEnum.user })
   role: UserRoleEnum;
   
-  @Prop()
-  verificationToken: string;
+  @Prop({ default: null })
+  verificationToken: string | null;
 
-  @Prop()
-  resetPasswordToken: string;
+  @Prop({ default: null })
+  resetPasswordToken: string | null;
   
   @Prop({ default: true })
   active: boolean;
+  
+  @Prop({ default: true })
+  twoFA: boolean;
 
   @Prop({ type: Date, default: Date.now})
   createdDate: Date;

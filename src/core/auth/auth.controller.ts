@@ -1,9 +1,9 @@
-import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Get, Request, Req, SetMetadata } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, HttpCode, HttpStatus, Get, Request, Req, SetMetadata, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Credential } from './credentials.interface';
 import { ApiResponse, Response } from '../api/api.interface';
 import { PasswordHashPipe } from 'src/pipes/password-hash.pipe';
-import { UserRoleEnum } from 'src/modules/users/user.schema';
+import { User, UserRoleEnum } from 'src/modules/users/user.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -12,19 +12,41 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @SetMetadata('isPublic', true)
-  async login(@Body() body: Credential): Promise<ApiResponse<string | null>> {
-    const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.user);
+  async login(@Body() body: Credential): Promise<ApiResponse<boolean | string | null | undefined>> {
+    const response = await this.authService.validateUserAndSendSmsCode(body.email, body.password, UserRoleEnum.user);
+    if (response === false || response === undefined) {
+      return Response.Error("Credentials did not match..");
+    }
+    return Response.OK(response, typeof response === 'string' ? "Logged In" : "Sms Code has been sent to your phone number..");
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('login/smsverification')
+  @SetMetadata('isPublic', true)
+  async smsVerification(@Body() body: Credential): Promise<ApiResponse<string | undefined>> {
+    const response = await this.authService.validateUserAndSmsCode(body.email, body.password, body.smsCode, UserRoleEnum.user);
     if (response === undefined) {
-      return Response.Error("Log in failed");
+      return Response.Error("Code Invalid or Expired");
     }
     return Response.OK(response, "Logged In");
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('sendphonenumberverificationcode')
+  @SetMetadata('isPublic', true)
+  async sendPhoneNumberVerificationCode(@Body() body: User): Promise<ApiResponse<boolean | undefined>> {
+    const response = await this.authService.isPhoneNumberUnique(body.phoneNumber);
+    if (response === false) {
+      return Response.Error("Phone number verification falied");
+    }
+    return Response.OK(response, "Phone number verification, we are sending you code, please verify");
   }
   
   @HttpCode(HttpStatus.OK)
   @Post('login/admin')
   @SetMetadata('isPublic', true)
   async loginAdmin(@Body() body: Credential): Promise<ApiResponse<string | null>> {
-    const response = await this.authService.validateUser(body.email, body.password, UserRoleEnum.admin);
+    const response = await this.authService.validateAdmin(body.email, body.password, UserRoleEnum.admin);
     if (response === undefined) {
       return Response.Error("Log in failed");
     }

@@ -39,4 +39,29 @@ export class UserService extends CrudService<User> {
     async findByVerificationCode(verificationToken: string): Promise<User> {
         return this.userModel.findOne({ verificationToken }).exec();
     }
+
+    async isPhoneNumberUnique(phoneNumber: string) {
+        const query = {phoneNumber};
+        const user = await this.findOneByQuery(query);
+        return user && user.phoneNumber === phoneNumber ? false : true;
+    }
+
+    async twoFaEnable(userId: string) {
+        const user = await this.findById(userId);
+        user.twoFA = true;
+        await this.update(user._id, user);
+        return;
+    }
+
+    async twoFaDisable(userId: string) {
+        const user = await this.findById(userId);
+        user.twoFA = false;
+        await this.update(user._id, user);
+        return;
+    }
+
+    async getUser2Fa(userId: string) {
+        const user = await this.findById(userId);
+        return user.twoFA;
+    }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, UsePipes } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { Booking } from './booking.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
@@ -7,8 +7,7 @@ import { AdminGuard } from 'src/core/auth/admin.guard';
 import { ReqDec } from 'src/decorators/request.decorator';
 import { BookingPipe } from 'src/pipes/booking.pipe';
 import { UserSessionInfo } from 'src/core/auth/jwt.model';
-import { Request } from 'express';
-import { UserSession } from 'src/decorators/user-session-info.decorator';
+import { UserSessionDecorator } from 'src/decorators/user-session-info.decorator';
 
 @Controller('booking')
 export class BookingController {
@@ -38,7 +37,7 @@ export class BookingController {
   }
 
   @Get('completed')
-  async findUserCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @UserSession() userInfo: UserSessionInfo): Promise<ApiResponse<Booking[] | null>> {
+  async findUserCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @UserSessionDecorator() userInfo: UserSessionInfo): Promise<ApiResponse<Booking[] | null>> {
     try {
       const bookings = await this.bookingService.userCompletedServices({pageNumber, limit}, userInfo.sub);
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);
@@ -48,7 +47,7 @@ export class BookingController {
   }
 
   @Get('incompleted')
-  async findUserInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @UserSession() userInfo: UserSessionInfo): Promise<ApiResponse<Booking[] | null>> {
+  async findUserInCompletedServices(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @UserSessionDecorator() userInfo: UserSessionInfo): Promise<ApiResponse<Booking[] | null>> {
     try {
       const bookings = await this.bookingService.userInCompletedServices({pageNumber, limit}, userInfo.sub);
       return Response.OK(bookings.data, 'Bookings fetched successfully', await bookings.totalCount);

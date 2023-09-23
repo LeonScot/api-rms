@@ -6,12 +6,14 @@ import { RevokedToken, RevokedTokenSchema } from './revoked-token.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RevokedTokenService } from './revoked-token.service';
 import { MailModule } from '../email/mail.module';
+import { SmsModule } from '../sms/sms.module';
 
 @Module({
   imports: [
     UserModule,
     MailModule,
-    MongooseModule.forFeature([{ name: RevokedToken.name, schema: RevokedTokenSchema }]),
+    SmsModule,
+    MongooseModule.forFeature([{ name: RevokedToken.name, schema: RevokedTokenSchema }])
   ],
   controllers: [AuthController],
   providers: [AuthService, RevokedTokenService]

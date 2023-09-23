@@ -8,12 +8,67 @@ import { UserRoleEnum } from 'src/modules/users/user.schema';
 import { MailService } from '../email/mail.service';
 import { RevokedToken } from './revoked-token.schema';
 import { UserSessionInfo } from './jwt.model';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UserService, private jwtService: JwtService, private revokedTokenService: RevokedTokenService, private mailService: MailService) {}
+    constructor(
+        private userService: UserService,
+        private jwtService: JwtService,
+        private revokedTokenService: RevokedTokenService,
+        private mailService: MailService,
+        private smsService: SmsService,
+    ) {}
 
-    async validateUser(email: string, password: string, role: UserRoleEnum): Promise<string | null> {
+    async validateUserAndSendSmsCode(email: string, password: string, role: UserRoleEnum): Promise<boolean | string | undefined> {
+        const user = await this.userService.findByEmailnRole(email, role);
+        if (user && user.verified === true && this.comparePasswords(password, user.password)) {
+            if (user.twoFA === true) {
+                return await this.smsService.sendVerificationCode(user.phoneNumber);
+            } else {
+                return await this.validateUser(email, password, role);
+            }
+        }
+        // throw new UnauthorizedException();
+        return false;
+    }
+
+    async validateUserAndSmsCode(email: string, password: string, smsCode: string, role: UserRoleEnum): Promise<string | undefined> {
+        const user = await this.userService.findByEmailnRole(email, role);
+        const codeVerification = await this.smsService.verifyCode(user.phoneNumber, smsCode);
+        if (user && codeVerification === true && user.verified === true && this.comparePasswords(password, user.password)) {
+            
+            const { password, ...result } = user;
+            const payload: UserSessionInfo = { sub: user._id, username: user.email, role: user.role };
+
+            const access_token = await this.jwtService.signAsync(payload);
+            const revokedToken: RevokedToken = {token: access_token};
+            this.revokedTokenService.create(revokedToken);
+            return access_token;
+        }
+        // throw new UnauthorizedException();
+
+        return undefined;
+    }
+
+    async validateUser(email: string, password: string, role: UserRoleEnum): Promise<string | undefined> {
+        const user = await this.userService.findByEmailnRole(email, role);
+        if (user && user.verified === true && this.comparePasswords(password, user.password)) {
+            
+            const { password, ...result } = user;
+            const payload: UserSessionInfo = { sub: user._id, username: user.email, role: user.role };
+
+            const access_token = await this.jwtService.signAsync(payload);
+            const revokedToken: RevokedToken = {token: access_token};
+            this.revokedTokenService.create(revokedToken);
+            return access_token;
+        }
+        // throw new UnauthorizedException();
+
+        return undefined;
+    }
+
+    async validateAdmin(email: string, password: string, role: UserRoleEnum): Promise<string | undefined> {
         const user = await this.userService.findByEmailnRole(email, role);
         if (user && user.verified === true && this.comparePasswords(password, user.password)) {
 
@@ -70,4 +125,9 @@ export class AuthService {
         }
 
     }
+
+    async isPhoneNumberUnique(phoneNumber: string) {
+        return await this.userService.isPhoneNumberUnique(phoneNumber);
+    }
+
 }
