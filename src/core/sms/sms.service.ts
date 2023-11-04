@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as Twilio from 'twilio';
+import { EnvironmentVariables } from '../config/configuration';
 
 @Injectable()
 export class SmsService {
   private twilioClient: Twilio.Twilio;
 
-  constructor() {
+  constructor(private configService: ConfigService<EnvironmentVariables>) {
     // Initialize Twilio client with your account SID and auth token
-    this.twilioClient = Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    this.twilioClient = Twilio(this.configService.get('TWILIO_ACCOUNT_SID'), this.configService.get('TWILIO_AUTH_TOKEN'));
   }
 
   async sendSms(to: string, body: string): Promise<boolean> {
@@ -16,7 +18,7 @@ export class SmsService {
       await this.twilioClient.messages.create({
         body,
         to,
-        from: process.env.TWILIO_PHONE_NUMBER, // Your Twilio phone number
+        from: this.configService.get('TWILIO_PHONE_NUMBER'), // Your Twilio phone number
       });
       return true;
     } catch (error) {
@@ -31,7 +33,7 @@ export class SmsService {
     if (!validPhoneNumber) {
       return false;
     }
-    const sent = await this.twilioClient.verify.v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
+    const sent = await this.twilioClient.verify.v2.services(this.configService.get('TWILIO_VERIFY_SERVICE_SID'))
       .verifications
       .create({ to: phoneNumber, channel: 'sms' })
       .then( _ => true)
@@ -44,7 +46,7 @@ export class SmsService {
   }
 
   async verifyCode(phoneNumber: string, code: string): Promise<boolean> {
-    const verification = await this.twilioClient.verify.v2.services(process.env.TWILIO_VERIFY_SERVICE_SID)
+    const verification = await this.twilioClient.verify.v2.services(this.configService.get('TWILIO_VERIFY_SERVICE_SID'))
     .verificationChecks
     .create({ to: phoneNumber, code });
     

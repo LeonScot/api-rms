@@ -6,7 +6,7 @@ import { EnvironmentVariables } from '../config/configuration';
 
 class FireInit {
 
-    constructor(public configService: ConfigService<EnvironmentVariables>) {}
+    constructor(private configService: ConfigService<EnvironmentVariables>) {}
 
     async init() {
         await ConfigModule.envVariablesLoaded;
