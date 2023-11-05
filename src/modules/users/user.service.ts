@@ -60,6 +60,13 @@ export class UserService extends CrudService<User> {
         return;
     }
 
+    async saveBgColor(userId: string, backGroundColor: string) {
+        const user = await this.findById(userId);
+        user.backGroundColor = backGroundColor;
+        await this.update(user._id, user);
+        return;
+    }
+
     async getUser2Fa(userId: string) {
         const user = await this.findById(userId);
         return user.twoFA;

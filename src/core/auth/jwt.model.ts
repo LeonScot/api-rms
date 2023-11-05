@@ -8,6 +8,7 @@ export interface UserSessionInfo {
   sub: string;
   username: string;
   role: UserRoleEnum;
+  bgColor?: string | null;
   iat?: number;
   ext?: number;
 }

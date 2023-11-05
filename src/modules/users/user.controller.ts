@@ -129,4 +129,15 @@ export class UserController {
       return Response.Error('Disabling 2FA failed');
     }
   }
+
+  @Post('bgcolor')
+  async bgColor(@Body() body: {backGroundColor: string}, @UserSessionDecorator() userInfo: UserSessionInfo) {
+    try {
+      if (userInfo.role !== UserRoleEnum.user) { return; }
+      await this.userService.saveBgColor(userInfo.sub, body.backGroundColor);
+      return Response.OK(null, 'backGroundColor udpated successfully');
+    } catch (error) {
+      return Response.Error('backGroundColor udpate failed');
+    }
+  }
 }

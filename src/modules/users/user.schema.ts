@@ -58,6 +58,9 @@ export class User {
   @Prop({ default: true })
   twoFA: boolean;
 
+  @Prop({ required: false, default: null })
+  backGroundColor: string | null;
+
   @Prop({ type: Date, default: Date.now})
   createdDate: Date;
   
