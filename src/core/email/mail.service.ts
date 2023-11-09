@@ -9,7 +9,7 @@ export class MailService {
   constructor(private mailerService: MailerService, private configService: ConfigService<EnvironmentVariables>) {}
 
   async sendUserConfirmation(user: User) {
-    const url = `${this.configService.get('BASE_URL')}/signup/user/verify?token=${user.verificationToken}`;
+    const url = `${this.configService.get('WEB_APP_URL')}/signup/user/verify?token=${user.verificationToken}`;
 
     await this.mailerService.sendMail({
       to: user.email,
@@ -26,7 +26,7 @@ export class MailService {
   }
 
   async sendForgotPasswordEmail(user: User) {
-    const url = `${this.configService.get('BASE_URL')}/login/forgot-pass-reset?token=${user.resetPasswordToken}`;
+    const url = `${this.configService.get('WEB_APP_URL')}/login/forgot-pass-reset?token=${user.resetPasswordToken}`;
 
     await this.mailerService.sendMail({
       to: user.email,
