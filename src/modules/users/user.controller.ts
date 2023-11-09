@@ -25,7 +25,7 @@ export class UserController {
           return Response.Error("Incorrect code phone number verification failed");
         }
       }
-      await this.userService.create(user);
+      await this.userService.createHasFile(user);
       await this.mailService.sendUserConfirmation(user);
       return Response.OK(user, 'User created successfully');
     } catch (error) {

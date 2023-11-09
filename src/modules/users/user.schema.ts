@@ -61,6 +61,9 @@ export class User {
   @Prop({ required: false, default: null })
   backGroundColor: string | null;
 
+  @Prop({ required: false, default: null})
+  image: string | null;
+
   @Prop({ type: Date, default: Date.now})
   createdDate: Date;
   

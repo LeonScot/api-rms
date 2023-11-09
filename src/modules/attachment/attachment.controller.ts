@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseFilePipeBuilder, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Put, Query, UploadedFiles, UseInterceptors, SetMetadata } from '@nestjs/common';
 import { AttachmentService } from './attachment.service';
 import { Attachment } from './attachment.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
@@ -12,6 +12,7 @@ export class AttachmentController {
 
     @Post()
     @UseInterceptors(FilesInterceptor('files'))
+    @SetMetadata('isPublic', true)
     async create(
       @UploadedFiles(
         new ParseFilePipe({
