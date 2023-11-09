@@ -11,6 +11,8 @@ import { from, switchMap, lastValueFrom } from 'rxjs';
 @Injectable()
 export class UserService extends CrudService<User> {
 
+    public searchFields: string[] = ['name', 'email'];
+
     constructor(@InjectModel(User.name) private readonly userModel: Model<User>, private attachmentService: AttachmentService) {
         super(userModel);
     }

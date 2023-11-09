@@ -24,5 +24,5 @@ export const Response = {
   },
 };
 
-export interface IPagination { pageNumber: number; limit: number }
+export interface IPagination { pageNumber: number; limit: number, search?: string }
 export interface ISort { field: string; order: 'asc' | 'desc' }

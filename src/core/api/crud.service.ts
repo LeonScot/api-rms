@@ -11,6 +11,8 @@ export abstract class CrudService<T> {
 
     public refObjectNames: string[] = [];
 
+    public searchFields: string[] = [];
+
     constructor(private readonly model: Model<T>) {}
 
     async create(rec: T): Promise<T> {
@@ -18,9 +20,27 @@ export abstract class CrudService<T> {
         return createdRec.save();
     }
 
-    async findAll(page?: IPagination, sort?: ISort ): Promise<{ data: T[]; totalCount: number }> {
+    async findAll(page?: IPagination, sort?: ISort): Promise<{ data: T[]; totalCount: number }> {
         const query = this.model.find(this.query);
-
+    
+        // Add search functionality
+        if (page && page.search && this.searchFields.length) {
+            
+            // Create a regular expression to match the search string case-insensitively
+            const searchRegExp = new RegExp(page.search, 'i');
+    
+            // Generate an OR condition for each field
+            const orConditions = this.searchFields.reduce((conditions, key) => {
+                if (!key.includes('.')) {
+                    conditions.push({ [key]: searchRegExp });
+                }
+                return conditions;
+            }, []);
+    
+            // Add the OR conditions to the query
+            query.or(orConditions);
+        }
+    
         // Exclude documents
         if (this.excludedQuery) {
             for (const key in this.excludedQuery) {
@@ -30,32 +50,33 @@ export abstract class CrudService<T> {
                 }
             }
         }
-        
+    
         // Apply sorting if sort options are provided
         if (sort) {
-          const { field, order } = sort;
-          const sortOrder = order === 'desc' ? -1 : 1;
-          query.sort({ [field]: sortOrder });
+            const { field, order } = sort;
+            const sortOrder = order === 'desc' ? -1 : 1;
+            query.sort({ [field]: sortOrder });
         }
         
+        const totalCount = await this.model.countDocuments(query).exec();
+
         // Apply pagination if page options are provided
         if (page && page.pageNumber && page.limit && page.pageNumber > 0 && page.limit > 0) {
-          const skip = (page.pageNumber - 1) * page.limit;
-          query.skip(skip).limit(page.limit);
+            const skip = (page.pageNumber - 1) * page.limit;
+            query.skip(skip).limit(page.limit);
         }
-        
+    
         // Execute the query and populate reference objects
         const data = await query.populate(this.refObjectNames).exec();
-        
+    
         // Count the total number of documents
-        const totalCount = await this.count();
-        
+        // const totalCount = await this.count();
+    
         this.resetQuery();
         this.resetExcludedQuery();
-        
+    
         return { data, totalCount };
-    }
-
+    }    
 
     /** Suitable when use in a loop */
     async findAllDirectQuery(queryDirect: object | null = null, page: IPagination | null = null, sort: ISort | null = null ): Promise<{ data: T[]; totalCount: number }> {
