@@ -25,6 +25,7 @@ export class SubscriptionPayloadPipe implements PipeTransform<any> {
     }
 
     const subId = request.body['subId'] as string;
+    const userId = request.body['userId'] ? request.body['userId'] : decodedToken.sub;
     const subscription = await this.subscriptionService.findById(subId);
 
     const startDate = new Date();
@@ -35,7 +36,7 @@ export class SubscriptionPayloadPipe implements PipeTransform<any> {
       startDate,
       endDate,
       autoRenew: false,
-      user: decodedToken.sub,
+      user: userId,
       subscription: subId as string,
     }
 
