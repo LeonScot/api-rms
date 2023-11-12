@@ -22,9 +22,9 @@ export class RewardController {
   }
 
   @Get()
-  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<Reward[] | null>> {
+  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('search') search: string): Promise<ApiResponse<Reward[] | null>> {
     try {
-      const rewards = await this.rewardService.findAll({pageNumber, limit});
+      const rewards = await this.rewardService.findAll({pageNumber, limit, search});
       return Response.OK(rewards.data, 'Rewards fetched successfully', await rewards.totalCount);
     } catch (error) {
       return Response.Error('Error fetching Rewards');

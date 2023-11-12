@@ -39,6 +39,19 @@ export abstract class CrudService<T> {
     
             // Add the OR conditions to the query
             query.or(orConditions);
+
+            // Ref search 
+            // query.populate({
+            //     path: 'userRefField',
+            //     match: {
+            //         // Specify the fields you want to search on in the referenced collection (User)
+            //         $or: [
+            //             { 'name': searchRegExp },
+            //             { 'email': searchRegExp },
+            //             // Add more fields as needed
+            //         ],
+            //     },
+            // });
         }
     
         // Exclude documents
