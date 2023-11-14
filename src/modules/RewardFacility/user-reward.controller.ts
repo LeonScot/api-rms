@@ -3,6 +3,8 @@ import { UserRewardService } from './user-reward.service';
 import { UserReward } from './user-reward.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
 import { MongoError } from 'mongodb';
+import { UserSessionInfo } from 'src/core/auth/jwt.model';
+import { UserSessionDecorator } from 'src/decorators/user-session-info.decorator';
 
 @Controller('userReward')
 export class UserRewardController {
@@ -23,6 +25,16 @@ export class UserRewardController {
   async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<UserReward[] | null>> {
     try {
       const userRewards = await this.userRewardService.findAll({pageNumber, limit}, {field: 'createdDate', order: 'desc'});
+      return Response.OK(userRewards.data, 'UserRewards fetched successfully', await userRewards.totalCount);
+    } catch (error) {
+      return Response.Error('Error fetching UserRewards');
+    }
+  }
+
+  @Get('userownrewards')
+  async userOwnRewards(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @UserSessionDecorator() userInfo: UserSessionInfo): Promise<ApiResponse<UserReward[] | null>> {
+    try {
+      const userRewards = await this.userRewardService.getUserOwnRewards(userInfo.sub, {pageNumber, limit});
       return Response.OK(userRewards.data, 'UserRewards fetched successfully', await userRewards.totalCount);
     } catch (error) {
       return Response.Error('Error fetching UserRewards');
