@@ -29,9 +29,9 @@ export class ServicesOfferedController {
   async syncServices(): Promise<ApiResponse<ServicesOffered[] | null>> {
     try {
       const services = await this.servicesOfferedService.syncServices();
-      return Response.OK(services, 'ServicesOffered created successfully');
+      return Response.OK(services, 'ServicesOffered Synced successfully');
     } catch (error) {
-      return Response.Error(error instanceof MongoError ? error.message : 'Error creating ServicesOffered');
+      return Response.Error(error instanceof MongoError ? error.message : 'Error Synching ServicesOffered');
     }
   }
 
