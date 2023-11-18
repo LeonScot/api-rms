@@ -39,7 +39,7 @@ export class AuthService {
         if (user && codeVerification === true && user.verified === true && this.comparePasswords(password, user.password)) {
             
             const { password, ...result } = user;
-            const payload: UserSessionInfo = { sub: user._id, username: user.email, role: user.role };
+            const payload: UserSessionInfo = { sub: user._id, username: user.email, role: user.role, bgColor: user.backGroundColor };
 
             const access_token = await this.jwtService.signAsync(payload);
             const revokedToken: RevokedToken = {token: access_token};
@@ -56,7 +56,7 @@ export class AuthService {
         if (user && user.verified === true && this.comparePasswords(password, user.password)) {
             
             const { password, ...result } = user;
-            const payload: UserSessionInfo = { sub: user._id, username: user.email, role: user.role };
+            const payload: UserSessionInfo = { sub: user._id, username: user.email, role: user.role, bgColor: user.backGroundColor };
 
             const access_token = await this.jwtService.signAsync(payload);
             const revokedToken: RevokedToken = {token: access_token};

@@ -5,11 +5,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User, UserRoleEnum } from './user.schema';
 import { CrudService } from 'src/core/api/crud.service';
 import { IPagination } from 'src/core/api/api.interface';
+import { AttachmentService } from '../attachment/attachment.service';
+import { from, switchMap, lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class UserService extends CrudService<User> {
 
-    constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {
+    public searchFields: string[] = ['name', 'email'];
+
+    constructor(@InjectModel(User.name) private readonly userModel: Model<User>, private attachmentService: AttachmentService) {
         super(userModel);
     }
 
@@ -60,8 +64,28 @@ export class UserService extends CrudService<User> {
         return;
     }
 
+    async saveBgColor(userId: string, backGroundColor: string) {
+        const user = await this.findById(userId);
+        user.backGroundColor = backGroundColor;
+        await this.update(user._id, user);
+        return;
+    }
+
     async getUser2Fa(userId: string) {
         const user = await this.findById(userId);
         return user.twoFA;
+    }
+
+    
+    public createHasFile(user: User) {
+        const user$ = from(this.create(user)).pipe(
+            switchMap(async res => {
+                const attachment = await this.attachmentService.findByUrl(res.image);
+                attachment.isLinked = true;
+                this.attachmentService.update(attachment._id, attachment);
+                return res;
+            })
+        );
+        return lastValueFrom(user$);
     }
 }

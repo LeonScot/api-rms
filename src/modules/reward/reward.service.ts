@@ -12,6 +12,8 @@ import { UserRoleEnum } from '../users/user.schema';
 @Injectable()
 export class RewardService extends CrudService<Reward> {
 
+    public searchFields: string[] = ['name', 'description'];
+
     constructor(@InjectModel(Reward.name) private readonly rewardModel: Model<Reward>, private attachmentService: AttachmentService) {
         super(rewardModel);
     }

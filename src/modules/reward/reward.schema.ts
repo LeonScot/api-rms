@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { ValueTypeEnum } from '../discount-code-type/discount-code-type.schema';
+import { ServicesOffered } from '../ServicesOffered/services-offered.schema';
 
 export enum RewardTypeEnum {
   retention = 'retention',
@@ -32,7 +33,7 @@ export class Reward {
   active: boolean;
 
   @Prop({ required: true})
-  durationInMonth: number;
+  durationInDays: number;
   
   @Prop({ required: true})
   value: number;
@@ -51,12 +52,9 @@ export class Reward {
 
   @Prop({ required: true})
   count: number;
-
-  @Prop({ required: true, enum: [ServiceOrProduct.product, ServiceOrProduct.service]})
-  serviceOrProduct: ServiceOrProduct;
-
-  @Prop({ required: true})
-  serviceOrProductId: string;
+  
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: ServicesOffered.name })
+  service: ServicesOffered;
 
   @Prop({ type: Date, default: Date.now})
   createdDate: Date;

@@ -20,10 +20,10 @@ export class SubscriptionController {
     }
 
     @Get()
-    async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<Subscription[] | null>> {
+    async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('search') search: string): Promise<ApiResponse<Subscription[] | null>> {
       
       try {
-        const subscriptions = await this.subscriptionService.findAll({pageNumber, limit}, {field: 'createdDate', order: 'desc'});
+        const subscriptions = await this.subscriptionService.findAll({pageNumber, limit, search}, {field: 'createdDate', order: 'desc'});
         return Response.OK(subscriptions.data, 'Subscriptions fetched successfully', await subscriptions.totalCount);
       } catch (error) {
         return Response.Error('Error fetching Subscriptions');

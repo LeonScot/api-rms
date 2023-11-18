@@ -9,6 +9,7 @@ import { BookingService } from '../Booking/booking.service';
 import { UserService } from '../users/user.service';
 import { Reward } from '../reward/reward.schema';
 import { User } from '../users/user.schema';
+import { IPagination } from 'src/core/api/api.interface';
 
 @Injectable()
 export class UserRewardService extends CrudService<UserReward> {
@@ -51,5 +52,11 @@ export class UserRewardService extends CrudService<UserReward> {
             }
             
         });
+    }
+
+    public getUserOwnRewards(userId: string, page?: IPagination) {
+
+        this.setQuery({user: userId, active: true});
+        return this.findAll(page, {field: 'createdDate', order: 'desc'});
     }
 }

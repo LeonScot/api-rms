@@ -10,6 +10,8 @@ import { Subscription } from '../subscription/subscription.schema';
 export class DiscountCodeTypeService extends CrudService<DiscountCodeType> {
 
     public refObjectNames: string[] = [Subscription.name.toLowerCase()];
+    
+    public searchFields: string[] = ['name', 'description'];
 
     constructor(@InjectModel(DiscountCodeType.name) private readonly discountCodeTypeModel: Model<DiscountCodeType>) {
         super(discountCodeTypeModel);

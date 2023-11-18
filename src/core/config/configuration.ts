@@ -1,6 +1,7 @@
 export interface EnvironmentVariables {
     DB_URI: string,
     BASE_URL: string,
+    WEB_APP_URL: string,
 
     FIREBASE_PROJECT_ID: string,
     FIREBASE_PRIVATE_KEY: string,
@@ -21,6 +22,7 @@ export interface EnvironmentVariables {
 export default () => ({
     DB_URI: process.env.DB_URI,
     BASE_URL: process.env.BASE_URL,
+    WEB_APP_URL: process.env.WEB_APP_URL,
 
     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
     FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,

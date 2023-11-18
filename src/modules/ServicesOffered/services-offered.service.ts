@@ -13,6 +13,8 @@ import { UserSessionInfo } from 'src/core/auth/jwt.model';
 @Injectable()
 export class ServicesOfferedService extends CrudService<ServicesOffered> {
 
+    public searchFields: string[] = ['name', 'description'];
+
     constructor(@InjectModel(ServicesOffered.name) private readonly servicesOfferedModel: Model<ServicesOffered>, private bookingService: BookingService) {
         super(servicesOfferedModel);
     }

@@ -20,10 +20,10 @@ export class DiscountCodeTypeController {
   }
 
   @Get()
-  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number): Promise<ApiResponse<DiscountCodeType[] | null>> {
+  async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('search') search: string): Promise<ApiResponse<DiscountCodeType[] | null>> {
     
     try {
-      const discountCodeTypes = await this.discountCodeTypeService.findAll({pageNumber, limit});
+      const discountCodeTypes = await this.discountCodeTypeService.findAll({pageNumber, limit, search});
       return Response.OK(discountCodeTypes.data, 'DiscountCodeTypes fetched successfully', discountCodeTypes.totalCount);
     } catch (error) {
       return Response.Error('Error fetching DiscountCodeTypes');

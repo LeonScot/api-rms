@@ -25,7 +25,7 @@ export class UserController {
           return Response.Error("Incorrect code phone number verification failed");
         }
       }
-      await this.userService.create(user);
+      await this.userService.createHasFile(user);
       await this.mailService.sendUserConfirmation(user);
       return Response.OK(user, 'User created successfully');
     } catch (error) {
@@ -55,10 +55,10 @@ export class UserController {
 
   @Get()
   @UseGuards(AdminGuard)
-  async findAllUsers(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('userType') userType: UserRoleEnum): Promise<ApiResponse<User[] | null>> {
+  async findAllUsers(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('search') search: string, @Query('userType') userType: UserRoleEnum): Promise<ApiResponse<User[] | null>> {
     
     try {
-      const users = userType === UserRoleEnum.user ? await this.userService.getClients({pageNumber, limit}) : (userType === UserRoleEnum.admin ? await this.userService.getAdmins({pageNumber, limit}) : {data: [], totalCount: 0});
+      const users = userType === UserRoleEnum.user ? await this.userService.getClients({pageNumber, limit, search}) : (userType === UserRoleEnum.admin ? await this.userService.getAdmins({pageNumber, limit, search}) : {data: [], totalCount: 0});
       return Response.OK(users.data, 'Users fetched successfully', users.totalCount);
     } catch (error) {
       return Response.Error('Error fetching users');
@@ -127,6 +127,17 @@ export class UserController {
       return Response.OK(null, '2FA Disabled successfully');
     } catch (error) {
       return Response.Error('Disabling 2FA failed');
+    }
+  }
+
+  @Post('bgcolor')
+  async bgColor(@Body() body: {backGroundColor: string}, @UserSessionDecorator() userInfo: UserSessionInfo) {
+    try {
+      if (userInfo.role !== UserRoleEnum.user) { return; }
+      await this.userService.saveBgColor(userInfo.sub, body.backGroundColor);
+      return Response.OK(null, 'backGroundColor udpated successfully');
+    } catch (error) {
+      return Response.Error('backGroundColor udpate failed');
     }
   }
 }

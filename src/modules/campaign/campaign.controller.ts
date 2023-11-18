@@ -23,7 +23,7 @@ export class CampaignController {
     }
 
     @Get()
-    async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Req() request: Request): Promise<ApiResponse<Campaign[] | null>> {
+    async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('search') search: string, @Req() request: Request): Promise<ApiResponse<Campaign[] | null>> {
       const user: UserSessionInfo = request['user'];
       this.campaignService.setQuery(user.role === UserRoleEnum.user ?  {
         $and: [
@@ -32,7 +32,7 @@ export class CampaignController {
         ],
       } : {});
       try {
-        const campaigns = await this.campaignService.findAll({pageNumber, limit});
+        const campaigns = await this.campaignService.findAll({pageNumber, limit, search});
         return Response.OK(campaigns.data, 'Campaigns fetched successfully', await campaigns.totalCount);
       } catch (error) {
         return Response.Error('Error fetching Campaigns');
