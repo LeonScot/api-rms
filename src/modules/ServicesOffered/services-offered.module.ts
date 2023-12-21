@@ -5,12 +5,14 @@ import { ServicesOffered, ServicesOfferedSchema } from "./services-offered.schem
 import { ServicesOfferedService } from './services-offered.service';
 import { AttachmentModule } from '../attachment/attachment.module';
 import { BookingModule } from '../Booking/booking.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
     imports: [
       MongooseModule.forFeature([{ name: ServicesOffered.name, schema: ServicesOfferedSchema }]),
       AttachmentModule,
-      BookingModule
+      BookingModule,
+      HttpModule
     ],
     controllers: [ServicesOfferedController],
     providers: [ServicesOfferedService]

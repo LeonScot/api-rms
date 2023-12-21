@@ -29,7 +29,7 @@ export class ServicesOfferedController {
   async syncServices(): Promise<ApiResponse<ServicesOffered[] | null>> {
     try {
       const services = await this.servicesOfferedService.syncServices();
-      return Response.OK(services, 'ServicesOffered Synced successfully');
+      return Response.OK([], 'ServicesOffered Synced successfully');
     } catch (error) {
       return Response.Error(error instanceof MongoError ? error.message : 'Error Synching ServicesOffered');
     }
@@ -38,6 +38,7 @@ export class ServicesOfferedController {
   @Get()
   async findAll(@Query('pageNumber') pageNumber: number, @Query('limit') limit: number, @Query('search') search: string, @UserSessionDecorator() userInfo: UserSessionInfo): Promise<ApiResponse<ServicesOffered[] | null>> {
     try {
+      const services = await this.servicesOfferedService.syncServices();
       const servicesOffereds = await this.servicesOfferedService.findAllConditonal({pageNumber, limit, search}, userInfo);
       return Response.OK(servicesOffereds.data, 'ServicesOffereds fetched successfully', servicesOffereds.totalCount);
     } catch (error) {
