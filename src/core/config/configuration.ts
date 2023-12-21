@@ -16,8 +16,10 @@ export interface EnvironmentVariables {
     TWILIO_AUTH_TOKEN: string,
     TWILIO_PHONE_NUMBER: string,
     TWILIO_VERIFY_SERVICE_SID: string,
-}
 
+    X_AUTH_KEY: string,
+    INTAKE_SERVICE_API: string,
+}
 
 export default () => ({
     DB_URI: process.env.DB_URI,
@@ -37,4 +39,7 @@ export default () => ({
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
     TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER,
     TWILIO_VERIFY_SERVICE_SID: process.env.TWILIO_VERIFY_SERVICE_SID,
+
+    X_AUTH_KEY: process.env.X_AUTH_KEY,
+    INTAKE_SERVICE_API: process.env.INTAKE_SERVICE_API,
 });

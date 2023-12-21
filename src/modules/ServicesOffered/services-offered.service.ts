@@ -11,6 +11,8 @@ import { BookingService } from '../Booking/booking.service';
 import { UserSessionInfo } from 'src/core/auth/jwt.model';
 import { HttpService } from '@nestjs/axios';
 import { AxiosHeaders } from 'axios';
+import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariables } from 'src/core/config/configuration';
 
 @Injectable()
 export class ServicesOfferedService extends CrudService<ServicesOffered> {
@@ -20,15 +22,16 @@ export class ServicesOfferedService extends CrudService<ServicesOffered> {
     constructor(
         @InjectModel(ServicesOffered.name) private readonly servicesOfferedModel: Model<ServicesOffered>,
         private bookingService: BookingService,
-        private readonly httpService: HttpService
+        private readonly httpService: HttpService,
+        private configService: ConfigService<EnvironmentVariables>
     ) {
         super(servicesOfferedModel);
     }
 
     public async syncServices() {
         try {
-            const headers = new AxiosHeaders().set('X-Auth-Key', '2df2c90e0285d815c449e1da73d1402b0af1f5ef');
-            this.httpService.get<IntakeQData>('https://intakeq.com/api/v1/appointments/settings', {headers}).subscribe({
+            const headers = new AxiosHeaders().set('X-Auth-Key', this.configService.get('X_AUTH_KEY'));
+            this.httpService.get<IntakeQData>(this.configService.get('INTAKE_SERVICE_API'), {headers}).subscribe({
                 next: response => {
                     console.log('response', response);
                     response.data.Services.forEach(async service => {
