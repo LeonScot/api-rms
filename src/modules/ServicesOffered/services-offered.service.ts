@@ -33,7 +33,6 @@ export class ServicesOfferedService extends CrudService<ServicesOffered> {
             const headers = new AxiosHeaders().set('X-Auth-Key', this.configService.get('X_AUTH_KEY'));
             this.httpService.get<IntakeQData>(this.configService.get('INTAKE_SERVICE_API'), {headers}).subscribe({
                 next: response => {
-                    console.log('response', response);
                     response.data.Services.forEach(async service => {
                         const find = await this.findOneByQuery({intakeId: service.Id});
                         if (find) {
