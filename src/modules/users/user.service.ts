@@ -27,6 +27,11 @@ export class UserService extends CrudService<User> {
         return this.findAll(page);
     }
 
+    async getAllActiveClientsHasSubscription(page?: IPagination) {
+        this.setQuery({ role: UserRoleEnum.user, active: true });
+        return this.findAll(page);
+    }
+
     async getAdmins(page?: IPagination) {
         this.setQuery({ role: UserRoleEnum.admin});
         return this.findAll(page);

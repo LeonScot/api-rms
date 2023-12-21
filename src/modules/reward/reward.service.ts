@@ -2,7 +2,7 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Reward, RewardTypeEnum } from './reward.schema';
+import { Reward, RewardCategoriesEnum, RewardTypeEnum } from './reward.schema';
 import { CrudService } from 'src/core/api/crud.service';
 import { from, lastValueFrom, switchMap } from 'rxjs';
 import { AttachmentService } from '../attachment/attachment.service';
@@ -53,5 +53,11 @@ export class RewardService extends CrudService<Reward> {
         const query = { rewardType: RewardTypeEnum.visit, active: true };
         const sort: ISort = {field: 'count', order: 'desc'};
         return this.findOneByQuery(query, sort);
+    }
+
+    public getMonthlyVipsRewards() {
+        const query = { rewardCategory: RewardCategoriesEnum.monthlyVipsReward, active: true };
+        this.setQuery(query)
+        return this.findAll();
     }
 }

@@ -10,6 +10,8 @@ import { UserService } from '../users/user.service';
 import { Reward } from '../reward/reward.schema';
 import { User } from '../users/user.schema';
 import { IPagination } from 'src/core/api/api.interface';
+import { UserSubscriptionService } from '../user-subscription/user-subscription.service';
+import { MailService } from 'src/core/email/mail.service';
 
 @Injectable()
 export class UserRewardService extends CrudService<UserReward> {
@@ -20,13 +22,34 @@ export class UserRewardService extends CrudService<UserReward> {
         @InjectModel(UserReward.name) private readonly rewardModel: Model<UserReward>,
         private rewardService: RewardService,
         private bookingService: BookingService,
-        private userService: UserService
+        private userService: UserService,
+        private userSubscriptionService: UserSubscriptionService,
+        private mailService: MailService,
     ) {
         super(rewardModel);
     }
 
     public getLastUserReward(userId: string) {
         return this.findOneByQuery({user: userId, active: true, expired: false, batchCompleted: false, usedAt: null}, {field: 'createdDate', order: 'desc'});
+    }
+
+    public async cronVipsMonthlyReward() {
+        
+        const monthlyRewards = (await this.rewardService.getMonthlyVipsRewards()).data;
+        const usersSubs = (await this.userSubscriptionService.getAllActiveUserSubscriptions()).data;
+
+        usersSubs.forEach(sub => {
+            monthlyRewards.forEach(async monthlyReward => {
+                if (typeof sub.user === 'object') {
+                    await this.create({
+                        user: typeof sub.user._id,
+                        reward: monthlyReward._id,
+                    });
+                    await this.mailService.sendRewardEmail(sub.user, monthlyReward);
+                }
+            });
+        });
+
     }
 
     public async cronToAssignUserReward() {

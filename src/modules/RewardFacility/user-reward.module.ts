@@ -9,13 +9,18 @@ import { UserService } from '../users/user.service';
 import { RewardModule } from '../reward/reward.module';
 import { BookingModule } from '../Booking/booking.module';
 import { UserModule } from '../users/user.module';
+import { UserSubscriptionModule } from '../user-subscription/user-subscription.module';
+import { UserSubscriptionService } from '../user-subscription/user-subscription.service';
+import { MailModule } from 'src/core/email/mail.module';
 
 @Module({
     imports: [
       MongooseModule.forFeature([{ name: UserReward.name, schema: UserRewardSchema }]),
       RewardModule,
       BookingModule,
-      UserModule
+      UserModule,
+      UserSubscriptionModule,
+      MailModule
     ],
     controllers: [UserRewardController],
     providers: [UserRewardService]

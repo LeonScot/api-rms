@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, SetMetadata } from '@nestjs/common';
 import { UserRewardService } from './user-reward.service';
 import { UserReward } from './user-reward.schema';
 import { ApiResponse, Response } from 'src/core/api/api.interface';
@@ -45,6 +45,17 @@ export class UserRewardController {
   async cronCheck(): Promise<ApiResponse<UserReward[] | null>> {
     try {
       const userRewards = await this.userRewardService.cronToAssignUserReward();
+      return Response.OK(null, 'UserRewards fetched successfully', 0);
+    } catch (error) {
+      return Response.Error('Error fetching UserRewards');
+    }
+  }
+
+  @Post('cron_monthly_reward')
+  @SetMetadata('isPublic', true)
+  async cronMonthlyReward(): Promise<ApiResponse<UserReward[] | null>> {
+    try {
+      const userRewards = await this.userRewardService.cronVipsMonthlyReward();
       return Response.OK(null, 'UserRewards fetched successfully', 0);
     } catch (error) {
       return Response.Error('Error fetching UserRewards');

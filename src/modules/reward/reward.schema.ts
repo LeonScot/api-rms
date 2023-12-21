@@ -8,6 +8,14 @@ export enum RewardTypeEnum {
   visit = 'visit'
 }
 
+export enum RewardCategoriesEnum {
+  customReward = 'customReward',
+  monthlyVipsReward = 'monthlyVipsReward',
+  comebackReward = 'comebackReward',
+  birthdayReward = 'birthdayReward',
+}
+
+// Not using
 export enum ServiceOrProduct {
   service = 'service',
   product = 'product'
@@ -49,7 +57,13 @@ export class Reward {
   
   @Prop({ required: true, enum: [RewardTypeEnum.retention, RewardTypeEnum.visit]})
   rewardType: RewardTypeEnum;
+  
+  // Cron jobs will run based on below value
+  @Prop({ required: true, enum: [RewardCategoriesEnum.customReward, RewardCategoriesEnum.birthdayReward, RewardCategoriesEnum.comebackReward, RewardCategoriesEnum.monthlyVipsReward]})
+  rewardCategory: RewardCategoriesEnum;
 
+  // count = no of days when rewardType = retention
+  // count = no of visits when rewardType = visit
   @Prop({ required: true})
   count: number;
   
